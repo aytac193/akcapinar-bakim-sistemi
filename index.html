@@ -426,11 +426,12 @@
         <div class="buttons">
 
             <button
-                class="main-button"
-                onclick="showIssueForm()"
-            >
-                + Sorun Bildir
-            </button>
+    class="main-button"
+    id="sorunBildirButton"
+    type="button"
+>
+    + Sorun Bildir
+</button>
 
 
             <button
@@ -1115,7 +1116,18 @@ async function dashboardSayilariniGetir() {
 /* ==================================================
    SAYFA BAŞLANGICI
 ================================================== */
+document.getElementById("sorunBildirButton").addEventListener("click", function () {
 
+    const form = document.getElementById("issueForm");
+
+    form.style.display = "block";
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+});
 checkSession();
 
 </script>
