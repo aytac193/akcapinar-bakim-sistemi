@@ -1127,6 +1127,7 @@ async function dashboardSayilariniGetir() {
 /* ==================================================
    SAYFA BAŞLANGICI
 ================================================== */
+
 document.getElementById("sorunBildirButton").addEventListener("click", function () {
 
     const form = document.getElementById("issueForm");
@@ -1137,102 +1138,21 @@ document.getElementById("sorunBildirButton").addEventListener("click", function 
         behavior: "smooth",
         block: "start"
     });
-    document.getElementById("mekanikIslerButton").addEventListener("click", function () {
+
+});
+
+
+document.getElementById("mekanikIslerButton").addEventListener("click", function () {
 
     alert("Mekanik İşler ekranı açılacak.");
 
 });
 
-});
-    async function sorunlariGetir() {
-
-    const liste =
-        document.getElementById("sorunlarListesi");
-
-    const result =
-        await supabaseClient
-            .from("sorunlar")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
-
-    if (result.error) {
-
-        console.error(
-            "SORUNLAR YÜKLEME HATASI:",
-            result.error
-        );
-
-        liste.textContent =
-            "Sorunlar yüklenemedi.";
-
-        return;
-    }
-
-    if (!result.data || result.data.length === 0) {
-
-        liste.textContent =
-            "Henüz kayıtlı sorun yok.";
-
-        return;
-    }
-
-    liste.innerHTML =
-        result.data.map(sorun => `
-
-            <div style="
-                border:1px solid #ddd;
-                padding:15px;
-                margin-bottom:10px;
-                border-radius:8px;
-            ">
-
-                <strong>${sorun.kumes || "-"}</strong>
-
-                <br>
-
-                Sorun Türü:
-                ${sorun.sorun_turu || "-"}
-
-                <br>
-
-                Ekipman:
-                ${sorun.ekipman || "-"}
-
-                <br>
-
-                Öncelik:
-                ${sorun.oncelik || "-"}
-
-                <br>
-
-                Durum:
-                ${sorun.durum || "-"}
-
-                <br>
-
-                Açıklama:
-                ${sorun.aciklama || "-"}
-
-                <br><br>
-
-                <small>
-                    ${new Date(sorun.created_at)
-                        .toLocaleString("tr-TR")}
-                </small>
-
-            </div>
-
-        `).join("");
-}
-
 
 sorunlariGetir();
 
 checkSession();
-checkSession();
-alert("JavaScript çalışıyor");
+
 </script>
 
 </body>
