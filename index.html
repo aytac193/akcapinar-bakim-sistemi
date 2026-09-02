@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akçapınar Bakım Sistemi</title>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -17,10 +20,94 @@
             color: #222;
         }
 
+        /* GİRİŞ EKRANI */
+
+        #loginScreen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #f4f6f8;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+        }
+
+        .login-box h1 {
+            margin-top: 0;
+            text-align: center;
+            color: #1f2937;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-box label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #1f2937;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            opacity: 0.9;
+        }
+
+        #loginMessage {
+            margin-top: 15px;
+            text-align: center;
+            color: #dc2626;
+            min-height: 20px;
+        }
+
+        /* ANA SİSTEM */
+
+        #appScreen {
+            display: none;
+        }
+
         header {
             background: #1f2937;
             color: white;
-            padding: 25px;
+            padding: 20px 25px;
+        }
+
+        header .header-content {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
         }
 
         header h1 {
@@ -31,6 +118,16 @@
         header p {
             margin: 8px 0 0;
             opacity: 0.8;
+        }
+
+        .logout-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .container {
@@ -77,7 +174,7 @@
             gap: 15px;
         }
 
-        button {
+        .main-button {
             border: none;
             padding: 18px;
             border-radius: 10px;
@@ -87,7 +184,7 @@
             color: white;
         }
 
-        button:hover {
+        .main-button:hover {
             opacity: 0.9;
         }
 
@@ -96,68 +193,317 @@
             padding: 30px;
             color: #777;
         }
+
+        @media (max-width: 600px) {
+            header .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logout-button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-<header>
-    <h1>AKÇAPINAR BAKIM SİSTEMİ</h1>
-    <p>Bakım ve arıza takip platformu</p>
-</header>
+<!-- ========================= -->
+<!-- GİRİŞ EKRANI -->
+<!-- ========================= -->
 
-<div class="container">
+<div id="loginScreen">
 
-    <div class="welcome">
-        <h2>Hoş Geldiniz</h2>
-        <p>Bakım faaliyetlerini ve arıza bildirimlerini buradan takip edebilirsiniz.</p>
-    </div>
+    <div class="login-box">
 
-    <div class="cards">
+        <h1>AKÇAPINAR</h1>
 
-        <div class="card">
-            <h3>🆕 Yeni Sorunlar</h3>
-            <div class="number">0</div>
-            <p>Çözüm bekleyen yeni sorunlar</p>
-        </div>
+        <p>Bakım Sistemi Giriş</p>
 
-        <div class="card">
-            <h3>🚨 Acil İşler</h3>
-            <div class="number">0</div>
-            <p>Acil müdahale bekleyen işler</p>
-        </div>
+        <label for="email">E-posta</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="E-posta adresiniz"
+        >
 
-        <div class="card">
-            <h3>🔧 Mekanik</h3>
-            <div class="number">0</div>
-            <p>Devam eden mekanik işler</p>
-        </div>
+        <label for="password">Şifre</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Şifreniz"
+        >
 
-        <div class="card">
-            <h3>⚡ Elektrik</h3>
-            <div class="number">0</div>
-            <p>Devam eden elektrik işleri</p>
-        </div>
+        <button onclick="login()">
+            Giriş Yap
+        </button>
 
-    </div>
-
-    <div class="buttons">
-
-        <button>+ Sorun Bildir</button>
-
-        <button>🔧 Mekanik İşler</button>
-
-        <button>⚡ Elektrik İşler</button>
-
-        <button>📋 Tüm İşler</button>
+        <div id="loginMessage"></div>
 
     </div>
 
 </div>
 
-<footer>
-    Akçapınar Bakım Sistemi
-</footer>
+
+<!-- ========================= -->
+<!-- ANA SİSTEM -->
+<!-- ========================= -->
+
+<div id="appScreen">
+
+    <header>
+
+        <div class="header-content">
+
+            <div>
+                <h1>AKÇAPINAR BAKIM SİSTEMİ</h1>
+                <p>Bakım ve arıza takip platformu</p>
+            </div>
+
+            <button class="logout-button" onclick="logout()">
+                Çıkış Yap
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <div class="container">
+
+        <div class="welcome">
+
+            <h2 id="welcomeText">
+                Hoş Geldiniz
+            </h2>
+
+            <p>
+                Bakım faaliyetlerini ve arıza bildirimlerini
+                buradan takip edebilirsiniz.
+            </p>
+
+        </div>
+
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>🆕 Yeni Sorunlar</h3>
+                <div class="number">0</div>
+                <p>Çözüm bekleyen yeni sorunlar</p>
+            </div>
+
+
+            <div class="card">
+                <h3>🚨 Acil İşler</h3>
+                <div class="number">0</div>
+                <p>Acil müdahale bekleyen işler</p>
+            </div>
+
+
+            <div class="card">
+                <h3>🔧 Mekanik</h3>
+                <div class="number">0</div>
+                <p>Devam eden mekanik işler</p>
+            </div>
+
+
+            <div class="card">
+                <h3>⚡ Elektrik</h3>
+                <div class="number">0</div>
+                <p>Devam eden elektrik işleri</p>
+            </div>
+
+        </div>
+
+
+        <div class="buttons">
+
+            <button class="main-button">
+                + Sorun Bildir
+            </button>
+
+            <button class="main-button">
+                🔧 Mekanik İşler
+            </button>
+
+            <button class="main-button">
+                ⚡ Elektrik İşler
+            </button>
+
+            <button class="main-button">
+                📋 Tüm İşler
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+        Akçapınar Bakım Sistemi
+    </footer>
+
+</div>
+
+
+<script>
+
+    // ==========================================
+    // SUPABASE BAĞLANTISI
+    // ==========================================
+
+    const SUPABASE_URL = "https://dxjqxzenxzjdqojzgbhj.supabase.co";
+
+    const SUPABASE_KEY = "sb_publishable_H8AoL7yGoc2eAEtKVW9FVA_RYSUo4wB";
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+    // ==========================================
+    // GİRİŞ
+    // ==========================================
+
+    async function login() {
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const message =
+            document.getElementById("loginMessage");
+
+
+        message.textContent = "";
+
+
+        if (!email || !password) {
+
+            message.textContent =
+                "Lütfen e-posta ve şifrenizi girin.";
+
+            return;
+        }
+
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+
+        if (error) {
+
+            message.textContent =
+                "Giriş başarısız: " + error.message;
+
+            return;
+        }
+
+
+        await showApp(data.user);
+
+    }
+
+
+    // ==========================================
+    // SİSTEMİ GÖSTER
+    // ==========================================
+
+    async function showApp(user) {
+
+        document.getElementById("loginScreen").style.display =
+            "none";
+
+        document.getElementById("appScreen").style.display =
+            "block";
+
+
+        // Kullanıcının profilini getir
+
+        const { data: profile, error } =
+            await supabaseClient
+                .from("profiles")
+                .select("ad_soyad, rol")
+                .eq("id", user.id)
+                .single();
+
+
+        if (!error && profile) {
+
+            document.getElementById("welcomeText").textContent =
+                "Hoş Geldiniz, " + profile.ad_soyad;
+
+        } else {
+
+            document.getElementById("welcomeText").textContent =
+                "Hoş Geldiniz";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // ÇIKIŞ
+    // ==========================================
+
+    async function logout() {
+
+        await supabaseClient.auth.signOut();
+
+        document.getElementById("appScreen").style.display =
+            "none";
+
+        document.getElementById("loginScreen").style.display =
+            "flex";
+
+        document.getElementById("email").value = "";
+
+        document.getElementById("password").value = "";
+
+        document.getElementById("loginMessage").textContent = "";
+
+    }
+
+
+    // ==========================================
+    // SAYFA AÇILDIĞINDA OTURUM KONTROLÜ
+    // ==========================================
+
+    async function checkSession() {
+
+        const { data } =
+            await supabaseClient.auth.getSession();
+
+
+        if (data.session) {
+
+            await showApp(data.session.user);
+
+        } else {
+
+            document.getElementById("loginScreen").style.display =
+                "flex";
+
+            document.getElementById("appScreen").style.display =
+                "none";
+
+        }
+
+    }
+
+
+    checkSession();
+
+</script>
 
 </body>
 </html>
