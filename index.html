@@ -320,23 +320,166 @@
 
         <div class="buttons">
 
-            <button class="main-button">
-                + Sorun Bildir
-            </button>
+    <button class="main-button" onclick="showIssueForm()">
+        + Sorun Bildir
+    </button>
 
-            <button class="main-button">
-                🔧 Mekanik İşler
-            </button>
+    <button class="main-button">
+        🔧 Mekanik İşler
+    </button>
 
-            <button class="main-button">
-                ⚡ Elektrik İşler
-            </button>
+    <button class="main-button">
+        ⚡ Elektrik İşler
+    </button>
 
-            <button class="main-button">
-                📋 Tüm İşler
-            </button>
+    <button class="main-button">
+        📋 Tüm İşler
+    </button>
 
-        </div>
+</div>
+
+
+<!-- SORUN BİLDİR FORMU -->
+
+<div id="issueForm" style="
+    display:none;
+    margin-top:30px;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+">
+
+    <h2>Yeni Sorun Bildir</h2>
+
+    <label>Kümes</label>
+
+    <select id="kumes" style="
+        width:100%;
+        padding:13px;
+        margin:8px 0 18px;
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        font-size:16px;
+    ">
+        <option value="">Kümes seçiniz</option>
+        <option value="Kümes 1">Kümes 1</option>
+        <option value="Kümes 2">Kümes 2</option>
+        <option value="Kümes 3">Kümes 3</option>
+        <option value="Kümes 4">Kümes 4</option>
+        <option value="Kümes 5">Kümes 5</option>
+        <option value="Kümes 6">Kümes 6</option>
+        <option value="Pullet Kümes 1">Pullet Kümes 1</option>
+        <option value="Pullet Kümes 2">Pullet Kümes 2</option>
+        <option value="Genel">Genel</option>
+    </select>
+
+
+    <label>Sorun Türü</label>
+
+    <select id="sorunTuru"
+        onchange="ekipmanlariGoster()"
+        style="
+        width:100%;
+        padding:13px;
+        margin:8px 0 18px;
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        font-size:16px;
+    ">
+        <option value="">Sorun türü seçiniz</option>
+        <option value="mekanik">Mekanik</option>
+        <option value="elektrik">Elektrik</option>
+        <option value="diger">Diğer</option>
+    </select>
+
+
+    <label>Ekipman</label>
+
+    <select id="ekipman" style="
+        width:100%;
+        padding:13px;
+        margin:8px 0 18px;
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        font-size:16px;
+    ">
+        <option value="">Önce sorun türünü seçiniz</option>
+    </select>
+
+
+    <label>Öncelik</label>
+
+    <select id="oncelik" style="
+        width:100%;
+        padding:13px;
+        margin:8px 0 18px;
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        font-size:16px;
+    ">
+        <option value="normal">Normal</option>
+        <option value="oncelikli">Öncelikli</option>
+    </select>
+
+
+    <label>Sorun Açıklaması</label>
+
+    <textarea id="aciklama"
+        placeholder="Sorunu açıklayınız..."
+        style="
+        width:100%;
+        min-height:120px;
+        padding:13px;
+        margin:8px 0 18px;
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        font-size:16px;
+        resize:vertical;
+    "></textarea>
+
+
+    <button
+        onclick="sorunKaydet()"
+        style="
+        width:100%;
+        padding:15px;
+        border:none;
+        border-radius:8px;
+        background:#1f2937;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+    ">
+        Sorunu Bildir
+    </button>
+
+
+    <button
+        onclick="formuKapat()"
+        style="
+        width:100%;
+        padding:12px;
+        margin-top:10px;
+        border:none;
+        border-radius:8px;
+        background:#e5e7eb;
+        color:#222;
+        font-size:15px;
+        cursor:pointer;
+    ">
+        Vazgeç
+    </button>
+
+
+    <div id="issueMessage"
+        style="
+        margin-top:15px;
+        text-align:center;
+        font-weight:bold;
+    "></div>
+
+</div>
 
     </div>
 
