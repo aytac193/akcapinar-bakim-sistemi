@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Akçapınar Bakım Sistemi</title>
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -20,15 +20,13 @@
             color: #222;
         }
 
-        /* GİRİŞ EKRANI */
-
+        /* GİRİŞ */
         #loginScreen {
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
-            background: #f4f6f8;
         }
 
         .login-box {
@@ -41,8 +39,8 @@
         }
 
         .login-box h1 {
-            margin-top: 0;
             text-align: center;
+            margin: 0 0 10px;
             color: #1f2937;
         }
 
@@ -67,7 +65,7 @@
             font-size: 16px;
         }
 
-        .login-box button {
+        .login-button {
             width: 100%;
             padding: 15px;
             border: none;
@@ -78,19 +76,13 @@
             cursor: pointer;
         }
 
-        .login-box button:hover {
-            opacity: 0.9;
-        }
-
         #loginMessage {
             margin-top: 15px;
             text-align: center;
             color: #dc2626;
-            min-height: 20px;
         }
 
         /* ANA SİSTEM */
-
         #appScreen {
             display: none;
         }
@@ -101,7 +93,7 @@
             padding: 20px 25px;
         }
 
-        header .header-content {
+        .header-content {
             max-width: 1100px;
             margin: auto;
             display: flex;
@@ -121,15 +113,15 @@
         }
 
         .logout-button {
+            border: none;
             background: #dc2626;
             color: white;
-            border: none;
             padding: 10px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
         }
 
+        /* İÇERİK */
         .container {
             max-width: 1100px;
             margin: 30px auto;
@@ -144,6 +136,7 @@
             margin-bottom: 5px;
         }
 
+        /* KARTLAR */
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -167,6 +160,7 @@
             margin: 15px 0;
         }
 
+        /* BUTONLAR */
         .buttons {
             margin-top: 35px;
             display: grid;
@@ -184,8 +178,72 @@
             color: white;
         }
 
-        .main-button:hover {
-            opacity: 0.9;
+        /* FORM */
+        #issueForm {
+            display: none;
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        #issueForm h2 {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .save-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #16a34a;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .cancel-button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #e5e7eb;
+            color: #222;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #issueMessage {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 20px;
         }
 
         footer {
@@ -195,9 +253,9 @@
         }
 
         @media (max-width: 600px) {
-            header .header-content {
+            .header-content {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
             .logout-button {
@@ -209,9 +267,7 @@
 
 <body>
 
-<!-- ========================= -->
 <!-- GİRİŞ EKRANI -->
-<!-- ========================= -->
 
 <div id="loginScreen">
 
@@ -222,6 +278,7 @@
         <p>Bakım Sistemi Giriş</p>
 
         <label for="email">E-posta</label>
+
         <input
             type="email"
             id="email"
@@ -229,13 +286,17 @@
         >
 
         <label for="password">Şifre</label>
+
         <input
             type="password"
             id="password"
             placeholder="Şifreniz"
         >
 
-        <button onclick="login()">
+        <button
+            class="login-button"
+            onclick="login()"
+        >
             Giriş Yap
         </button>
 
@@ -246,9 +307,7 @@
 </div>
 
 
-<!-- ========================= -->
 <!-- ANA SİSTEM -->
-<!-- ========================= -->
 
 <div id="appScreen">
 
@@ -257,11 +316,17 @@
         <div class="header-content">
 
             <div>
+
                 <h1>AKÇAPINAR BAKIM SİSTEMİ</h1>
+
                 <p>Bakım ve arıza takip platformu</p>
+
             </div>
 
-            <button class="logout-button" onclick="logout()">
+            <button
+                class="logout-button"
+                onclick="logout()"
+            >
                 Çıkış Yap
             </button>
 
@@ -286,200 +351,271 @@
         </div>
 
 
+        <!-- KARTLAR -->
+
         <div class="cards">
 
             <div class="card">
+
                 <h3>🆕 Yeni Sorunlar</h3>
-                <div class="number">0</div>
+
+                <div
+                    class="number"
+                    id="newCount"
+                >
+                    0
+                </div>
+
                 <p>Çözüm bekleyen yeni sorunlar</p>
+
             </div>
 
 
             <div class="card">
+
                 <h3>🚨 Acil İşler</h3>
-                <div class="number">0</div>
+
+                <div
+                    class="number"
+                    id="urgentCount"
+                >
+                    0
+                </div>
+
                 <p>Acil müdahale bekleyen işler</p>
+
             </div>
 
 
             <div class="card">
+
                 <h3>🔧 Mekanik</h3>
-                <div class="number">0</div>
+
+                <div
+                    class="number"
+                    id="mechanicalCount"
+                >
+                    0
+                </div>
+
                 <p>Devam eden mekanik işler</p>
+
             </div>
 
 
             <div class="card">
+
                 <h3>⚡ Elektrik</h3>
-                <div class="number">0</div>
+
+                <div
+                    class="number"
+                    id="electricalCount"
+                >
+                    0
+                </div>
+
                 <p>Devam eden elektrik işleri</p>
+
             </div>
 
         </div>
 
 
+        <!-- ANA BUTONLAR -->
+
         <div class="buttons">
 
-    <button class="main-button" onclick="showIssueForm()">
-        + Sorun Bildir
-    </button>
-
-    <button class="main-button">
-        🔧 Mekanik İşler
-    </button>
-
-    <button class="main-button">
-        ⚡ Elektrik İşler
-    </button>
-
-    <button class="main-button">
-        📋 Tüm İşler
-    </button>
-
-</div>
+            <button
+                class="main-button"
+                onclick="showIssueForm()"
+            >
+                + Sorun Bildir
+            </button>
 
 
-<!-- SORUN BİLDİR FORMU -->
-
-<div id="issueForm" style="
-    display:none;
-    margin-top:30px;
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
-">
-
-    <h2>Yeni Sorun Bildir</h2>
-
-    <label>Kümes</label>
-
-    <select id="kumes" style="
-        width:100%;
-        padding:13px;
-        margin:8px 0 18px;
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        font-size:16px;
-    ">
-        <option value="">Kümes seçiniz</option>
-        <option value="Kümes 1">Kümes 1</option>
-        <option value="Kümes 2">Kümes 2</option>
-        <option value="Kümes 3">Kümes 3</option>
-        <option value="Kümes 4">Kümes 4</option>
-        <option value="Kümes 5">Kümes 5</option>
-        <option value="Kümes 6">Kümes 6</option>
-        <option value="Pullet Kümes 1">Pullet Kümes 1</option>
-        <option value="Pullet Kümes 2">Pullet Kümes 2</option>
-        <option value="Genel">Genel</option>
-    </select>
+            <button
+                class="main-button"
+                onclick="alert('Mekanik işler ekranını bir sonraki aşamada yapacağız.')"
+            >
+                🔧 Mekanik İşler
+            </button>
 
 
-    <label>Sorun Türü</label>
-
-    <select id="sorunTuru"
-        onchange="ekipmanlariGoster()"
-        style="
-        width:100%;
-        padding:13px;
-        margin:8px 0 18px;
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        font-size:16px;
-    ">
-        <option value="">Sorun türü seçiniz</option>
-        <option value="mekanik">Mekanik</option>
-        <option value="elektrik">Elektrik</option>
-        <option value="diger">Diğer</option>
-    </select>
+            <button
+                class="main-button"
+                onclick="alert('Elektrik işler ekranını bir sonraki aşamada yapacağız.')"
+            >
+                ⚡ Elektrik İşler
+            </button>
 
 
-    <label>Ekipman</label>
+            <button
+                class="main-button"
+                onclick="alert('Tüm işler ekranını bir sonraki aşamada yapacağız.')"
+            >
+                📋 Tüm İşler
+            </button>
 
-    <select id="ekipman" style="
-        width:100%;
-        padding:13px;
-        margin:8px 0 18px;
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        font-size:16px;
-    ">
-        <option value="">Önce sorun türünü seçiniz</option>
-    </select>
+        </div>
 
 
-    <label>Öncelik</label>
+        <!-- SORUN BİLDİR FORMU -->
 
-    <select id="oncelik" style="
-        width:100%;
-        padding:13px;
-        margin:8px 0 18px;
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        font-size:16px;
-    ">
-        <option value="normal">Normal</option>
-        <option value="oncelikli">Öncelikli</option>
-    </select>
+        <div id="issueForm">
+
+            <h2>Yeni Sorun Bildir</h2>
 
 
-    <label>Sorun Açıklaması</label>
+            <div class="form-group">
 
-    <textarea id="aciklama"
-        placeholder="Sorunu açıklayınız..."
-        style="
-        width:100%;
-        min-height:120px;
-        padding:13px;
-        margin:8px 0 18px;
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        font-size:16px;
-        resize:vertical;
-    "></textarea>
+                <label for="kumes">
+                    Kümes
+                </label>
 
+                <select
+                    id="kumes"
+                    class="form-control"
+                >
 
-    <button
-        onclick="sorunKaydet()"
-        style="
-        width:100%;
-        padding:15px;
-        border:none;
-        border-radius:8px;
-        background:#1f2937;
-        color:white;
-        font-size:16px;
-        cursor:pointer;
-    ">
-        Sorunu Bildir
-    </button>
+                    <option value="">
+                        Kümes seçiniz
+                    </option>
 
+                    <option value="Kümes 1">Kümes 1</option>
+                    <option value="Kümes 2">Kümes 2</option>
+                    <option value="Kümes 3">Kümes 3</option>
+                    <option value="Kümes 4">Kümes 4</option>
+                    <option value="Kümes 5">Kümes 5</option>
+                    <option value="Kümes 6">Kümes 6</option>
 
-    <button
-        onclick="formuKapat()"
-        style="
-        width:100%;
-        padding:12px;
-        margin-top:10px;
-        border:none;
-        border-radius:8px;
-        background:#e5e7eb;
-        color:#222;
-        font-size:15px;
-        cursor:pointer;
-    ">
-        Vazgeç
-    </button>
+                    <option value="Pullet Kümes 1">
+                        Pullet Kümes 1
+                    </option>
+
+                    <option value="Pullet Kümes 2">
+                        Pullet Kümes 2
+                    </option>
+
+                    <option value="Genel">
+                        Genel
+                    </option>
+
+                </select>
+
+            </div>
 
 
-    <div id="issueMessage"
-        style="
-        margin-top:15px;
-        text-align:center;
-        font-weight:bold;
-    "></div>
+            <div class="form-group">
 
-</div>
+                <label for="sorunTuru">
+                    Sorun Türü
+                </label>
+
+                <select
+                    id="sorunTuru"
+                    class="form-control"
+                    onchange="ekipmanlariGoster()"
+                >
+
+                    <option value="">
+                        Sorun türü seçiniz
+                    </option>
+
+                    <option value="mekanik">
+                        Mekanik
+                    </option>
+
+                    <option value="elektrik">
+                        Elektrik
+                    </option>
+
+                    <option value="diger">
+                        Diğer
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="ekipman">
+                    Ekipman
+                </label>
+
+                <select
+                    id="ekipman"
+                    class="form-control"
+                >
+
+                    <option value="">
+                        Önce sorun türünü seçiniz
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="oncelik">
+                    Öncelik
+                </label>
+
+                <select
+                    id="oncelik"
+                    class="form-control"
+                >
+
+                    <option value="normal">
+                        Normal
+                    </option>
+
+                    <option value="oncelikli">
+                        Öncelikli
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="aciklama">
+                    Sorun Açıklaması
+                </label>
+
+                <textarea
+                    id="aciklama"
+                    class="form-control"
+                    placeholder="Sorunu açıklayınız..."
+                ></textarea>
+
+            </div>
+
+
+            <button
+                class="save-button"
+                onclick="sorunKaydet()"
+            >
+                Sorunu Bildir
+            </button>
+
+
+            <button
+                class="cancel-button"
+                onclick="formuKapat()"
+            >
+                Vazgeç
+            </button>
+
+
+            <div id="issueMessage"></div>
+
+        </div>
 
     </div>
 
@@ -493,255 +629,293 @@
 
 <script>
 
-    // ==========================================
-    // SUPABASE BAĞLANTISI
-    // ==========================================
+/* ==================================================
+   SUPABASE
+================================================== */
 
-    const SUPABASE_URL = "https://dxjqxzenxzjdqojzgbhj.supabase.co";
+const SUPABASE_URL =
+    "https://dxjqxzenxzjdqojzgbhj.supabase.co";
 
-    const SUPABASE_KEY = "sb_publishable_H8AoL7yGoc2eAEtKVW9FVA_RYSUo4wB";
+const SUPABASE_KEY =
+    "sb_publishable_H8AoL7yGoc2eAEtKVW9FVA_RYSUo4wB";
 
-    const supabaseClient = supabase.createClient(
+const supabaseClient =
+    supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
 
 
-    // ==========================================
-    // GİRİŞ
-    // ==========================================
+/* ==================================================
+   GİRİŞ
+================================================== */
 
-    async function login() {
+async function login() {
 
-        const email =
-            document.getElementById("email").value.trim();
+    const email =
+        document.getElementById("email").value.trim();
 
-        const password =
-            document.getElementById("password").value;
+    const password =
+        document.getElementById("password").value;
 
-        const message =
-            document.getElementById("loginMessage");
+    const message =
+        document.getElementById("loginMessage");
 
+    message.textContent = "";
 
-        message.textContent = "";
+    if (!email || !password) {
 
+        message.textContent =
+            "Lütfen e-posta ve şifrenizi girin.";
 
-        if (!email || !password) {
-
-            message.textContent =
-                "Lütfen e-posta ve şifrenizi girin.";
-
-            return;
-        }
-
-
-        const { data, error } =
-            await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-
-        if (error) {
-
-            message.textContent =
-                "Giriş başarısız: " + error.message;
-
-            return;
-        }
-
-
-        await showApp(data.user);
-
+        return;
     }
 
+    const result =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-    // ==========================================
-    // SİSTEMİ GÖSTER
-    // ==========================================
+    if (result.error) {
 
-    async function showApp(user) {
+        message.textContent =
+            "Giriş başarısız: " +
+            result.error.message;
 
-        document.getElementById("loginScreen").style.display =
-            "none";
-
-        document.getElementById("appScreen").style.display =
-            "block";
-
-
-        // Kullanıcının profilini getir
-
-        const { data: profile, error } =
-            await supabaseClient
-                .from("profiles")
-                .select("ad_soyad, rol")
-                .eq("id", user.id)
-                .single();
-
-
-        if (!error && profile) {
-
-            document.getElementById("welcomeText").textContent =
-                "Hoş Geldiniz, " + profile.ad_soyad;
-
-        } else {
-
-            document.getElementById("welcomeText").textContent =
-                "Hoş Geldiniz";
-
-        }
-
+        return;
     }
 
+    await showApp(result.data.user);
+}
 
-    // ==========================================
-    // ÇIKIŞ
-    // ==========================================
 
-    async function logout() {
+/* ==================================================
+   ANA EKRAN
+================================================== */
 
-        await supabaseClient.auth.signOut();
+async function showApp(user) {
 
-        document.getElementById("appScreen").style.display =
-            "none";
+    document.getElementById("loginScreen").style.display =
+        "none";
 
-        document.getElementById("loginScreen").style.display =
-            "flex";
+    document.getElementById("appScreen").style.display =
+        "block";
 
-        document.getElementById("email").value = "";
+    const result =
+        await supabaseClient
+            .from("profiles")
+            .select("ad_soyad, rol")
+            .eq("id", user.id)
+            .single();
 
-        document.getElementById("password").value = "";
+    if (!result.error && result.data) {
 
-        document.getElementById("loginMessage").textContent = "";
-
+        document.getElementById("welcomeText").textContent =
+            "Hoş Geldiniz, " +
+            result.data.ad_soyad;
     }
 
-
-    // ==========================================
-    // SAYFA AÇILDIĞINDA OTURUM KONTROLÜ
-    // ==========================================
-
-    async function checkSession() {
-
-        const { data } =
-            await supabaseClient.auth.getSession();
+    await dashboardSayilariniGetir();
+}
 
 
-        if (data.session) {
+/* ==================================================
+   ÇIKIŞ
+================================================== */
 
-            await showApp(data.session.user);
+async function logout() {
 
-        } else {
+    await supabaseClient.auth.signOut();
 
-            document.getElementById("loginScreen").style.display =
-                "flex";
+    document.getElementById("appScreen").style.display =
+        "none";
 
-            document.getElementById("appScreen").style.display =
-                "none";
+    document.getElementById("loginScreen").style.display =
+        "flex";
 
-        }
+    document.getElementById("email").value = "";
 
+    document.getElementById("password").value = "";
+}
+
+
+/* ==================================================
+   OTURUM KONTROLÜ
+================================================== */
+
+async function checkSession() {
+
+    const result =
+        await supabaseClient.auth.getSession();
+
+    if (result.data.session) {
+
+        await showApp(
+            result.data.session.user
+        );
     }
+}
 
 
-    checkSession();
-// ==========================================
-// SORUN BİLDİRME FORMUNU AÇ
-// ==========================================
+/* ==================================================
+   SORUN FORMUNU AÇ
+================================================== */
 
 function showIssueForm() {
-    document.getElementById("issueForm").style.display = "block";
 
-    document.getElementById("issueForm").scrollIntoView({
-        behavior: "smooth"
+    const form =
+        document.getElementById("issueForm");
+
+    form.style.display = "block";
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
     });
 }
 
 
-// ==========================================
-// FORMU KAPAT
-// ==========================================
+/* ==================================================
+   FORMU KAPAT
+================================================== */
 
 function formuKapat() {
-    document.getElementById("issueForm").style.display = "none";
+
+    document.getElementById("issueForm").style.display =
+        "none";
 
     document.getElementById("kumes").value = "";
+
     document.getElementById("sorunTuru").value = "";
+
     document.getElementById("ekipman").innerHTML =
         '<option value="">Önce sorun türünü seçiniz</option>';
-    document.getElementById("oncelik").value = "normal";
+
+    document.getElementById("oncelik").value =
+        "normal";
+
     document.getElementById("aciklama").value = "";
-    document.getElementById("issueMessage").textContent = "";
+
+    document.getElementById("issueMessage").textContent =
+        "";
 }
 
 
-// ==========================================
-// EKİPMAN LİSTESİ
-// ==========================================
+/* ==================================================
+   EKİPMANLAR
+================================================== */
 
 function ekipmanlariGoster() {
 
-    const sorunTuru =
+    const tur =
         document.getElementById("sorunTuru").value;
 
     const ekipman =
         document.getElementById("ekipman");
 
-    ekipman.innerHTML = "";
+    ekipman.innerHTML =
+        '<option value="">Ekipman seçiniz</option>';
 
 
-    if (sorunTuru === "mekanik") {
+    if (tur === "mekanik") {
 
-        ekipman.innerHTML = `
-            <option value="">Ekipman seçiniz</option>
-            <option value="Yem Hattı">Yem Hattı</option>
-            <option value="Gübre Sistemi">Gübre Sistemi</option>
-            <option value="Fan">Fan</option>
-            <option value="Konveyör">Konveyör</option>
-            <option value="Suluk">Suluk</option>
-            <option value="Kapı">Kapı</option>
-            <option value="Diğer">Diğer</option>
+        ekipman.innerHTML += `
+
+            <option value="Yem Hattı">
+                Yem Hattı
+            </option>
+
+            <option value="Gübre Sistemi">
+                Gübre Sistemi
+            </option>
+
+            <option value="Fan">
+                Fan
+            </option>
+
+            <option value="Konveyör">
+                Konveyör
+            </option>
+
+            <option value="Suluk">
+                Suluk
+            </option>
+
+            <option value="Kapı">
+                Kapı
+            </option>
+
+            <option value="Diğer">
+                Diğer
+            </option>
+
         `;
-
     }
-    else if (sorunTuru === "elektrik") {
 
-        ekipman.innerHTML = `
-            <option value="">Ekipman seçiniz</option>
-            <option value="Motor">Motor</option>
-            <option value="Pano">Pano</option>
-            <option value="Sensör">Sensör</option>
-            <option value="Aydınlatma">Aydınlatma</option>
-            <option value="Kablo">Kablo</option>
-            <option value="Otomasyon">Otomasyon</option>
-            <option value="Diğer">Diğer</option>
+
+    else if (tur === "elektrik") {
+
+        ekipman.innerHTML += `
+
+            <option value="Motor">
+                Motor
+            </option>
+
+            <option value="Pano">
+                Pano
+            </option>
+
+            <option value="Sensör">
+                Sensör
+            </option>
+
+            <option value="Aydınlatma">
+                Aydınlatma
+            </option>
+
+            <option value="Kablo">
+                Kablo
+            </option>
+
+            <option value="Otomasyon">
+                Otomasyon
+            </option>
+
+            <option value="Diğer">
+                Diğer
+            </option>
+
         `;
-
     }
-    else if (sorunTuru === "diger") {
 
-        ekipman.innerHTML = `
-            <option value="">Ekipman seçiniz</option>
-            <option value="Diğer">Diğer</option>
+
+    else if (tur === "diger") {
+
+        ekipman.innerHTML += `
+
+            <option value="Diğer">
+                Diğer
+            </option>
+
         `;
-
-    }
-    else {
-
-        ekipman.innerHTML =
-            '<option value="">Önce sorun türünü seçiniz</option>';
     }
 }
 
 
-// ==========================================
-// SORUNU SUPABASE'E KAYDET
-// ==========================================
+/* ==================================================
+   SORUN KAYDET
+================================================== */
 
 async function sorunKaydet() {
 
     const message =
         document.getElementById("issueMessage");
+
+    message.textContent = "";
+
+    message.style.color = "#dc2626";
+
 
     const kumes =
         document.getElementById("kumes").value;
@@ -759,103 +933,191 @@ async function sorunKaydet() {
         document.getElementById("aciklama").value.trim();
 
 
-    message.textContent = "";
-    message.style.color = "#dc2626";
-
-
-    // Kontroller
-
     if (!kumes) {
-        message.textContent = "Lütfen kümes seçiniz.";
+
+        message.textContent =
+            "Lütfen kümes seçiniz.";
+
         return;
     }
+
 
     if (!sorunTuru) {
-        message.textContent = "Lütfen sorun türünü seçiniz.";
+
+        message.textContent =
+            "Lütfen sorun türünü seçiniz.";
+
         return;
     }
+
 
     if (!ekipman) {
-        message.textContent = "Lütfen ekipman seçiniz.";
+
+        message.textContent =
+            "Lütfen ekipman seçiniz.";
+
         return;
     }
+
 
     if (!aciklama) {
-        message.textContent = "Lütfen sorun açıklaması yazınız.";
-        return;
-    }
-
-
-    // Aktif kullanıcıyı al
-
-    const {
-        data: {
-            user
-        }
-    } = await supabaseClient.auth.getUser();
-
-
-    if (!user) {
 
         message.textContent =
-            "Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.";
+            "Lütfen sorun açıklaması yazınız.";
 
         return;
     }
 
 
-    // Supabase'e kayıt
+    const userResult =
+        await supabaseClient.auth.getUser();
 
-    const {
-        data,
-        error
-    } = await supabaseClient
-        .from("sorunlar")
-        .insert([
-            {
+
+    if (
+        userResult.error ||
+        !userResult.data.user
+    ) {
+
+        message.textContent =
+            "Oturum bulunamadı. Lütfen tekrar giriş yapın.";
+
+        return;
+    }
+
+
+    const user =
+        userResult.data.user;
+
+
+    const result =
+        await supabaseClient
+            .from("sorunlar")
+            .insert({
+
                 bildiren_id: user.id,
+
                 kumes: kumes,
+
                 sorun_turu: sorunTuru,
+
                 ekipman: ekipman,
+
                 aciklama: aciklama,
+
                 oncelik: oncelik,
+
                 durum: "yeni"
-            }
-        ])
-        .select();
+
+            });
 
 
-    if (error) {
+    if (result.error) {
 
-        console.error(error);
+        console.error(
+            "SORUN KAYIT HATASI:",
+            result.error
+        );
 
         message.textContent =
-            "Sorun kaydedilemedi: " + error.message;
+            "Sorun kaydedilemedi: " +
+            result.error.message;
 
         return;
     }
 
 
-    // Başarılı
-
-    message.style.color = "#16a34a";
+    message.style.color =
+        "#16a34a";
 
     message.textContent =
         "✓ Sorun başarıyla bildirildi.";
 
 
-    // Formu temizle
-
     document.getElementById("kumes").value = "";
+
     document.getElementById("sorunTuru").value = "";
 
     document.getElementById("ekipman").innerHTML =
         '<option value="">Önce sorun türünü seçiniz</option>';
 
-    document.getElementById("oncelik").value = "normal";
+    document.getElementById("oncelik").value =
+        "normal";
+
     document.getElementById("aciklama").value = "";
 
+
+    await dashboardSayilariniGetir();
 }
+
+
+/* ==================================================
+   DASHBOARD SAYILARI
+================================================== */
+
+async function dashboardSayilariniGetir() {
+
+    const yeni =
+        await supabaseClient
+            .from("sorunlar")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("durum", "yeni");
+
+    document.getElementById("newCount").textContent =
+        yeni.count || 0;
+
+
+    const acil =
+        await supabaseClient
+            .from("sorunlar")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("oncelik", "acil")
+            .neq("durum", "tamamlandi");
+
+    document.getElementById("urgentCount").textContent =
+        acil.count || 0;
+
+
+    const mekanik =
+        await supabaseClient
+            .from("sorunlar")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("sorun_turu", "mekanik")
+            .neq("durum", "tamamlandi");
+
+    document.getElementById("mechanicalCount").textContent =
+        mekanik.count || 0;
+
+
+    const elektrik =
+        await supabaseClient
+            .from("sorunlar")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("sorun_turu", "elektrik")
+            .neq("durum", "tamamlandi");
+
+    document.getElementById("electricalCount").textContent =
+        elektrik.count || 0;
+}
+
+
+/* ==================================================
+   SAYFA BAŞLANGICI
+================================================== */
+
+checkSession();
+
 </script>
 
 </body>
