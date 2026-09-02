@@ -1144,10 +1144,82 @@ document.getElementById("sorunBildirButton").addEventListener("click", function 
 
 document.getElementById("mekanikIslerButton").addEventListener("click", function () {
 
-    alert("Mekanik İşler ekranı açılacak.");
-    console.log("Mekanik buton bulundu");
+    const bolum = document.getElementById("sorunlarBolumu");
+
+    bolum.style.display = "block";
+
+    bolum.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    mekanikSorunlariGetir();
+    async function mekanikSorunlariGetir() {
+
+    const liste = document.getElementById("sorunlarListesi");
+
+    liste.innerHTML = "Mekanik sorunlar yükleniyor...";
+
+    const { data, error } = await supabaseClient
+        .from("sorunlar")
+        .select("*")
+        .eq("sorun_turu", "mekanik")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+
+        console.error(error);
+
+        liste.innerHTML = "Mekanik sorunlar yüklenirken hata oluştu.";
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        liste.innerHTML = "Henüz mekanik sorun bulunmuyor.";
+
+        return;
+    }
+
+    liste.innerHTML = "";
+
+    data.forEach(function (sorun) {
+
+        const tarih = new Date(sorun.created_at).toLocaleString("tr-TR");
+
+        liste.innerHTML += `
+            <div class="card" style="margin-bottom:15px;">
+
+                <strong>${sorun.kumes || "Kümes belirtilmemiş"}</strong>
+
+                <p>
+                    <b>Ekipman:</b> ${sorun.ekipman || "-"}
+                </p>
+
+                <p>
+                    <b>Öncelik:</b> ${sorun.oncelik || "-"}
+                </p>
+
+                <p>
+                    <b>Durum:</b> ${sorun.durum || "-"}
+                </p>
+
+                <p>
+                    <b>Açıklama:</b> ${sorun.aciklama || "-"}
+                </p>
+
+                <small>${tarih}</small>
+
+            </div>
+        `;
+
+    });
+
+}
 
 });
+    
 
 
 sorunlariGetir();
