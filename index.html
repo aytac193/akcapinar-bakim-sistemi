@@ -645,7 +645,217 @@
 
 
     checkSession();
+// ==========================================
+// SORUN BİLDİRME FORMUNU AÇ
+// ==========================================
 
+function showIssueForm() {
+    document.getElementById("issueForm").style.display = "block";
+
+    document.getElementById("issueForm").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+// ==========================================
+// FORMU KAPAT
+// ==========================================
+
+function formuKapat() {
+    document.getElementById("issueForm").style.display = "none";
+
+    document.getElementById("kumes").value = "";
+    document.getElementById("sorunTuru").value = "";
+    document.getElementById("ekipman").innerHTML =
+        '<option value="">Önce sorun türünü seçiniz</option>';
+    document.getElementById("oncelik").value = "normal";
+    document.getElementById("aciklama").value = "";
+    document.getElementById("issueMessage").textContent = "";
+}
+
+
+// ==========================================
+// EKİPMAN LİSTESİ
+// ==========================================
+
+function ekipmanlariGoster() {
+
+    const sorunTuru =
+        document.getElementById("sorunTuru").value;
+
+    const ekipman =
+        document.getElementById("ekipman");
+
+    ekipman.innerHTML = "";
+
+
+    if (sorunTuru === "mekanik") {
+
+        ekipman.innerHTML = `
+            <option value="">Ekipman seçiniz</option>
+            <option value="Yem Hattı">Yem Hattı</option>
+            <option value="Gübre Sistemi">Gübre Sistemi</option>
+            <option value="Fan">Fan</option>
+            <option value="Konveyör">Konveyör</option>
+            <option value="Suluk">Suluk</option>
+            <option value="Kapı">Kapı</option>
+            <option value="Diğer">Diğer</option>
+        `;
+
+    }
+    else if (sorunTuru === "elektrik") {
+
+        ekipman.innerHTML = `
+            <option value="">Ekipman seçiniz</option>
+            <option value="Motor">Motor</option>
+            <option value="Pano">Pano</option>
+            <option value="Sensör">Sensör</option>
+            <option value="Aydınlatma">Aydınlatma</option>
+            <option value="Kablo">Kablo</option>
+            <option value="Otomasyon">Otomasyon</option>
+            <option value="Diğer">Diğer</option>
+        `;
+
+    }
+    else if (sorunTuru === "diger") {
+
+        ekipman.innerHTML = `
+            <option value="">Ekipman seçiniz</option>
+            <option value="Diğer">Diğer</option>
+        `;
+
+    }
+    else {
+
+        ekipman.innerHTML =
+            '<option value="">Önce sorun türünü seçiniz</option>';
+    }
+}
+
+
+// ==========================================
+// SORUNU SUPABASE'E KAYDET
+// ==========================================
+
+async function sorunKaydet() {
+
+    const message =
+        document.getElementById("issueMessage");
+
+    const kumes =
+        document.getElementById("kumes").value;
+
+    const sorunTuru =
+        document.getElementById("sorunTuru").value;
+
+    const ekipman =
+        document.getElementById("ekipman").value;
+
+    const oncelik =
+        document.getElementById("oncelik").value;
+
+    const aciklama =
+        document.getElementById("aciklama").value.trim();
+
+
+    message.textContent = "";
+    message.style.color = "#dc2626";
+
+
+    // Kontroller
+
+    if (!kumes) {
+        message.textContent = "Lütfen kümes seçiniz.";
+        return;
+    }
+
+    if (!sorunTuru) {
+        message.textContent = "Lütfen sorun türünü seçiniz.";
+        return;
+    }
+
+    if (!ekipman) {
+        message.textContent = "Lütfen ekipman seçiniz.";
+        return;
+    }
+
+    if (!aciklama) {
+        message.textContent = "Lütfen sorun açıklaması yazınız.";
+        return;
+    }
+
+
+    // Aktif kullanıcıyı al
+
+    const {
+        data: {
+            user
+        }
+    } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        message.textContent =
+            "Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.";
+
+        return;
+    }
+
+
+    // Supabase'e kayıt
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("sorunlar")
+        .insert([
+            {
+                bildiren_id: user.id,
+                kumes: kumes,
+                sorun_turu: sorunTuru,
+                ekipman: ekipman,
+                aciklama: aciklama,
+                oncelik: oncelik,
+                durum: "yeni"
+            }
+        ])
+        .select();
+
+
+    if (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "Sorun kaydedilemedi: " + error.message;
+
+        return;
+    }
+
+
+    // Başarılı
+
+    message.style.color = "#16a34a";
+
+    message.textContent =
+        "✓ Sorun başarıyla bildirildi.";
+
+
+    // Formu temizle
+
+    document.getElementById("kumes").value = "";
+    document.getElementById("sorunTuru").value = "";
+
+    document.getElementById("ekipman").innerHTML =
+        '<option value="">Önce sorun türünü seçiniz</option>';
+
+    document.getElementById("oncelik").value = "normal";
+    document.getElementById("aciklama").value = "";
+
+}
 </script>
 
 </body>
