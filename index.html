@@ -1221,6 +1221,50 @@ async function sorunDetayAc(sorunId) {
                 ${new Date(data.created_at).toLocaleString("tr-TR")}
             </p>
 
+            <hr>
+
+            <h3>Durumu Değiştir</h3>
+
+            <select
+                id="durumSecimi"
+                class="form-control"
+            >
+
+                <option value="yeni"
+                    ${data.durum === "yeni" ? "selected" : ""}>
+                    Yeni
+                </option>
+
+                <option value="isleme_alindi"
+                    ${data.durum === "isleme_alindi" ? "selected" : ""}>
+                    İşleme Alındı
+                </option>
+
+                <option value="islemde"
+                    ${data.durum === "islemde" ? "selected" : ""}>
+                    İşlemde
+                </option>
+
+                <option value="tamamlandi"
+                    ${data.durum === "tamamlandi" ? "selected" : ""}>
+                    Tamamlandı
+                </option>
+
+                <option value="tekrar_acildi"
+                    ${data.durum === "tekrar_acildi" ? "selected" : ""}>
+                    Tekrar Açıldı
+                </option>
+
+            </select>
+
+            <button
+                class="save-button"
+                style="margin-top:15px;"
+                onclick="durumGuncelle(${data.id})"
+            >
+                Durumu Güncelle
+            </button>
+
             <button
                 class="cancel-button"
                 onclick="mekanikSorunlariGetir()"
