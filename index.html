@@ -1154,6 +1154,11 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
     });
 
     mekanikSorunlariGetir();
+    function sorunDetayAc(sorunId) {
+
+    alert("Seçilen arıza ID: " + sorunId);
+
+}
     async function mekanikSorunlariGetir() {
 
     const liste = document.getElementById("sorunlarListesi");
@@ -1189,7 +1194,11 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
         const tarih = new Date(sorun.created_at).toLocaleString("tr-TR");
 
         liste.innerHTML += `
-            <div class="card" style="margin-bottom:15px;">
+            <div
+    class="card"
+    style="margin-bottom:15px; cursor:pointer;"
+    onclick="sorunDetayAc(${sorun.id})"
+>
 
                 <strong>${sorun.kumes || "Kümes belirtilmemiş"}</strong>
 
