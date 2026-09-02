@@ -1158,9 +1158,79 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
 });
 
 
-function sorunDetayAc(sorunId) {
+async function sorunDetayAc(sorunId) {
 
-    alert("Seçilen arıza ID: " + sorunId);
+    const liste = document.getElementById("sorunlarListesi");
+
+    liste.innerHTML = "Arıza detayları yükleniyor...";
+
+    const { data, error } = await supabaseClient
+        .from("sorunlar")
+        .select("*")
+        .eq("id", sorunId)
+        .single();
+
+    if (error) {
+
+        console.error(error);
+
+        liste.innerHTML =
+            "Arıza detayları alınırken hata oluştu.";
+
+        return;
+    }
+
+    liste.innerHTML = `
+
+        <div class="card">
+
+            <h2>🔧 Arıza Detayı</h2>
+
+            <p>
+                <b>Kümes:</b>
+                ${data.kumes || "-"}
+            </p>
+
+            <p>
+                <b>Ekipman:</b>
+                ${data.ekipman || "-"}
+            </p>
+
+            <p>
+                <b>Sorun Türü:</b>
+                ${data.sorun_turu || "-"}
+            </p>
+
+            <p>
+                <b>Öncelik:</b>
+                ${data.oncelik || "-"}
+            </p>
+
+            <p>
+                <b>Durum:</b>
+                ${data.durum || "-"}
+            </p>
+
+            <p>
+                <b>Açıklama:</b>
+                ${data.aciklama || "-"}
+            </p>
+
+            <p>
+                <b>Bildirim Tarihi:</b>
+                ${new Date(data.created_at).toLocaleString("tr-TR")}
+            </p>
+
+            <button
+                class="cancel-button"
+                onclick="mekanikSorunlariGetir()"
+            >
+                ← Mekanik İşlere Dön
+            </button>
+
+        </div>
+
+    `;
 
 }
 
