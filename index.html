@@ -1154,12 +1154,18 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
     });
 
     mekanikSorunlariGetir();
-    function sorunDetayAc(sorunId) {
+
+});
+
+
+function sorunDetayAc(sorunId) {
 
     alert("Seçilen arıza ID: " + sorunId);
 
 }
-    async function mekanikSorunlariGetir() {
+
+
+async function mekanikSorunlariGetir() {
 
     const liste = document.getElementById("sorunlarListesi");
 
@@ -1175,14 +1181,16 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
 
         console.error(error);
 
-        liste.innerHTML = "Mekanik sorunlar yüklenirken hata oluştu.";
+        liste.innerHTML =
+            "Mekanik sorunlar yüklenirken hata oluştu.";
 
         return;
     }
 
     if (!data || data.length === 0) {
 
-        liste.innerHTML = "Henüz mekanik sorun bulunmuyor.";
+        liste.innerHTML =
+            "Henüz mekanik sorun bulunmuyor.";
 
         return;
     }
@@ -1191,31 +1199,39 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
 
     data.forEach(function (sorun) {
 
-        const tarih = new Date(sorun.created_at).toLocaleString("tr-TR");
+        const tarih =
+            new Date(sorun.created_at)
+            .toLocaleString("tr-TR");
 
         liste.innerHTML += `
             <div
-    class="card"
-    style="margin-bottom:15px; cursor:pointer;"
-    onclick="sorunDetayAc(${sorun.id})"
->
+                class="card"
+                style="margin-bottom:15px; cursor:pointer;"
+                onclick="sorunDetayAc(${sorun.id})"
+            >
 
-                <strong>${sorun.kumes || "Kümes belirtilmemiş"}</strong>
+                <strong>
+                    ${sorun.kumes || "Kümes belirtilmemiş"}
+                </strong>
 
                 <p>
-                    <b>Ekipman:</b> ${sorun.ekipman || "-"}
+                    <b>Ekipman:</b>
+                    ${sorun.ekipman || "-"}
                 </p>
 
                 <p>
-                    <b>Öncelik:</b> ${sorun.oncelik || "-"}
+                    <b>Öncelik:</b>
+                    ${sorun.oncelik || "-"}
                 </p>
 
                 <p>
-                    <b>Durum:</b> ${sorun.durum || "-"}
+                    <b>Durum:</b>
+                    ${sorun.durum || "-"}
                 </p>
 
                 <p>
-                    <b>Açıklama:</b> ${sorun.aciklama || "-"}
+                    <b>Açıklama:</b>
+                    ${sorun.aciklama || "-"}
                 </p>
 
                 <small>${tarih}</small>
@@ -1227,10 +1243,10 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
 
 }
 
-});
-    
 
+sorunlariGetir();
 
+checkSession();
 sorunlariGetir();
 
 checkSession();
