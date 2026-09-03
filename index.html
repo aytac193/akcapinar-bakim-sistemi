@@ -1270,7 +1270,34 @@ async function sorunDetayAc(sorunId) {
     `;
 
 }
+async function durumGuncelle(sorunId) {
 
+    const yeniDurum =
+        document.getElementById("durumSecimi").value;
+
+    const { error } = await supabaseClient
+        .from("sorunlar")
+        .update({
+            durum: yeniDurum,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", sorunId);
+
+    if (error) {
+
+        console.error(error);
+
+        alert("Durum güncellenemedi: " + error.message);
+
+        return;
+    }
+
+    alert("Durum başarıyla güncellendi.");
+
+    await dashboardSayilariniGetir();
+
+    await sorunDetayAc(sorunId);
+}
 
 async function mekanikSorunlariGetir() {
 
