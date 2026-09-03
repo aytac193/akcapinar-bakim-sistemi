@@ -1295,6 +1295,8 @@ async function durumGuncelle(sorunId) {
         document.getElementById("durumSecimi").value;
     const yapilanIslem =
         document.getElementById("yapilanIslem").value.trim();
+    const kullanilanParca =
+    document.getElementById("kullanilanParca").value.trim();
 
     const { error } = await supabaseClient
         .from("sorunlar")
