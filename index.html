@@ -1221,7 +1221,7 @@ async function sorunDetayAc(sorunId) {
                 ${new Date(data.created_at).toLocaleString("tr-TR")}
             </p>
 
-            <hr>
+            
 <hr>
 
 <h3>Yapılan İşlem</h3>
@@ -1231,6 +1231,18 @@ async function sorunDetayAc(sorunId) {
     class="form-control"
     placeholder="Yapılan işlemi açıklayınız..."
 >${data.yapilan_islem || ""}</textarea>
+<hr>
+
+<h3>Yapılan İşlem</h3>
+
+<textarea
+    id="yapilanIslem"
+    class="form-control"
+    placeholder="Yapılan işlemi açıklayınız..."
+>${data.yapilan_islem || ""}</textarea>
+
+<h3>Durumu Değiştir</h3>
+<hr>
             <h3>Durumu Değiştir</h3>
 
             <select
