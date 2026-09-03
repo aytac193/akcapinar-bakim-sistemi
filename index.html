@@ -1263,7 +1263,14 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
 });
     document.getElementById("personelYonetimiButton").addEventListener("click", function () {
 
-    alert("Personel Yönetimi ekranı hazırlanıyor.");
+    const bolum = document.getElementById("personelYonetimiBolumu");
+
+    bolum.style.display = "block";
+
+    bolum.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 
 });
 
