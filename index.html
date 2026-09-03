@@ -1303,6 +1303,7 @@ async function durumGuncelle(sorunId) {
         .update({
     durum: yeniDurum,
     yapilan_islem: yapilanIslem,
+    kullanilan_parca: kullanilanParca,
     updated_at: new Date().toISOString()
 })
         .eq("id", sorunId);
