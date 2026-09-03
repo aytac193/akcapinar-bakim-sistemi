@@ -1279,16 +1279,19 @@ async function sorunDetayAc(sorunId) {
 
 }
 async function durumGuncelle(sorunId) {
-
+    
     const yeniDurum =
         document.getElementById("durumSecimi").value;
+    const yapilanIslem =
+        document.getElementById("yapilanIslem").value.trim();
 
     const { error } = await supabaseClient
         .from("sorunlar")
         .update({
-            durum: yeniDurum,
-            updated_at: new Date().toISOString()
-        })
+    durum: yeniDurum,
+    yapilan_islem: yapilanIslem,
+    updated_at: new Date().toISOString()
+})
         .eq("id", sorunId);
 
     if (error) {
