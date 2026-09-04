@@ -1476,8 +1476,97 @@ async function durumGuncelle(sorunId) {
     await sorunDetayAc(sorunId);
 }
 
+/* ==================================================
+   MEKANİK SORUNLARI GETİR
+================================================== */
+
 async function mekanikSorunlariGetir() {
-    /* ==================================================
+
+    const liste =
+        document.getElementById("sorunlarListesi");
+
+    liste.innerHTML =
+        "Mekanik sorunlar yükleniyor...";
+
+    const { data, error } =
+        await supabaseClient
+            .from("sorunlar")
+            .select("*")
+            .eq("sorun_turu", "mekanik")
+            .order("created_at", {
+                ascending: false
+            });
+
+    if (error) {
+
+        console.error(error);
+
+        liste.innerHTML =
+            "Mekanik sorunlar yüklenirken hata oluştu.";
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        liste.innerHTML =
+            "Henüz mekanik sorun bulunmuyor.";
+
+        return;
+    }
+
+    liste.innerHTML = "";
+
+    data.forEach(function(sorun) {
+
+        const tarih =
+            new Date(sorun.created_at)
+                .toLocaleString("tr-TR");
+
+        liste.innerHTML += `
+
+            <div
+                class="card"
+                style="margin-bottom:15px; cursor:pointer;"
+                onclick="sorunDetayAc(${sorun.id})"
+            >
+
+                <strong>
+                    ${sorun.kumes || "Kümes belirtilmemiş"}
+                </strong>
+
+                <p>
+                    <b>Ekipman:</b>
+                    ${sorun.ekipman || "-"}
+                </p>
+
+                <p>
+                    <b>Öncelik:</b>
+                    ${sorun.oncelik || "-"}
+                </p>
+
+                <p>
+                    <b>Durum:</b>
+                    ${sorun.durum || "-"}
+                </p>
+
+                <p>
+                    <b>Açıklama:</b>
+                    ${sorun.aciklama || "-"}
+                </p>
+
+                <small>${tarih}</small>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* ==================================================
    PERSONEL EKLE
 ================================================== */
 
@@ -1530,6 +1619,7 @@ async function personelEkle() {
 
 
     message.style.color = "#374151";
+
     message.textContent =
         "Personel oluşturuluyor...";
 
@@ -1538,21 +1628,28 @@ async function personelEkle() {
 
         const response =
             await fetch(
-                SUPABASE_URL + "/functions/v1/personel-ekle",
+                SUPABASE_URL +
+                "/functions/v1/personel-ekle",
                 {
                     method: "POST",
 
                     headers: {
                         "Content-Type": "application/json",
+
                         "Authorization":
                             "Bearer " + SUPABASE_KEY
                     },
 
                     body: JSON.stringify({
+
                         ad_soyad: adSoyad,
+
                         email: email,
+
                         password: sifre,
+
                         rol: rol
+
                     })
                 }
             );
@@ -1569,7 +1666,8 @@ async function personelEkle() {
                 result
             );
 
-            message.style.color = "#dc2626";
+            message.style.color =
+                "#dc2626";
 
             message.textContent =
                 result.error ||
@@ -1580,16 +1678,28 @@ async function personelEkle() {
         }
 
 
-        message.style.color = "#16a34a";
+        message.style.color =
+            "#16a34a";
 
         message.textContent =
             "✓ Personel başarıyla oluşturuldu.";
 
 
-        document.getElementById("personelAdSoyad").value = "";
-        document.getElementById("personelEmail").value = "";
-        document.getElementById("personelSifre").value = "";
-        document.getElementById("personelRol").value = "personel";
+        document.getElementById(
+            "personelAdSoyad"
+        ).value = "";
+
+        document.getElementById(
+            "personelEmail"
+        ).value = "";
+
+        document.getElementById(
+            "personelSifre"
+        ).value = "";
+
+        document.getElementById(
+            "personelRol"
+        ).value = "personel";
 
 
         await personelleriGetir();
@@ -1602,7 +1712,8 @@ async function personelEkle() {
             error
         );
 
-        message.style.color = "#dc2626";
+        message.style.color =
+            "#dc2626";
 
         message.textContent =
             "Personel oluşturulurken bağlantı hatası oluştu.";
@@ -1610,7 +1721,9 @@ async function personelEkle() {
     }
 
 }
-    /* ==================================================
+
+
+/* ==================================================
    PERSONEL LİSTESİ
 ================================================== */
 
@@ -1692,81 +1805,10 @@ async function personelleriGetir() {
 
 }
 
-    const liste = document.getElementById("sorunlarListesi");
 
-    liste.innerHTML = "Mekanik sorunlar yükleniyor...";
-
-    const { data, error } = await supabaseClient
-        .from("sorunlar")
-        .select("*")
-        .eq("sorun_turu", "mekanik")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        console.error(error);
-
-        liste.innerHTML =
-            "Mekanik sorunlar yüklenirken hata oluştu.";
-
-        return;
-    }
-
-    if (!data || data.length === 0) {
-
-        liste.innerHTML =
-            "Henüz mekanik sorun bulunmuyor.";
-
-        return;
-    }
-
-    liste.innerHTML = "";
-
-    data.forEach(function (sorun) {
-
-        const tarih =
-            new Date(sorun.created_at)
-            .toLocaleString("tr-TR");
-
-        liste.innerHTML += `
-            <div
-                class="card"
-                style="margin-bottom:15px; cursor:pointer;"
-                onclick="sorunDetayAc(${sorun.id})"
-            >
-
-                <strong>
-                    ${sorun.kumes || "Kümes belirtilmemiş"}
-                </strong>
-
-                <p>
-                    <b>Ekipman:</b>
-                    ${sorun.ekipman || "-"}
-                </p>
-
-                <p>
-                    <b>Öncelik:</b>
-                    ${sorun.oncelik || "-"}
-                </p>
-
-                <p>
-                    <b>Durum:</b>
-                    ${sorun.durum || "-"}
-                </p>
-
-                <p>
-                    <b>Açıklama:</b>
-                    ${sorun.aciklama || "-"}
-                </p>
-
-                <small>${tarih}</small>
-
-            </div>
-        `;
-
-    });
-
-}
+/* ==================================================
+   SAYFA BAŞLANGICI
+================================================== */
 
 
 checkSession();
