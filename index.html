@@ -715,6 +715,9 @@
                         <option value="personel">
                             Personel
                         </option>
+                        <option value="yonetici">
+    Yönetici
+</option>
 
                         <option value="mekanik">
                             Mekanik
@@ -843,28 +846,208 @@ async function login() {
    ANA EKRAN
 ================================================== */
 
-async function showApp(user) {
+/* ==================================================
+   ROL YETKİLENDİRME
+================================================== */
 
-    document.getElementById("loginScreen").style.display =
-        "none";
+function rolYetkileriniUygula(rol) {
 
-    document.getElementById("appScreen").style.display =
-        "block";
+    const sorunBildir =
+        document.getElementById("sorunBildirButton");
 
-    const result =
-        await supabaseClient
-            .from("profiles")
-            .select("ad_soyad, rol")
-            .eq("id", user.id)
-            .single();
+    const mekanik =
+        document.getElementById("mekanikIslerButton");
 
-    if (!result.error && result.data) {
+    const personel =
+        document.getElementById("personelYonetimiButton");
 
-        document.getElementById("welcomeText").textContent =
-            "Hoş Geldiniz, " +
-            result.data.ad_soyad;
+    // Elektrik ve tüm işler şu anda onclick ile çalıştığı
+    // için butonları sınıf üzerinden buluyoruz.
+    const butonlar =
+        document.querySelectorAll(".main-button");
+
+    let elektrik = null;
+    let tumIsler = null;
+
+    butonlar.forEach(function(buton) {
+
+        if (buton.textContent.includes("Elektrik İşler")) {
+            elektrik = buton;
+        }
+
+        if (buton.textContent.includes("Tüm İşler")) {
+            tumIsler = buton;
+        }
+
+    });
+
+
+    // Önce hepsini gizle
+    if (sorunBildir) sorunBildir.style.display = "none";
+    if (mekanik) mekanik.style.display = "none";
+    if (personel) personel.style.display = "none";
+    if (elektrik) elektrik.style.display = "none";
+    if (tumIsler) tumIsler.style.display = "none";
+
+
+    // YÖNETİCİ
+    if (rol === "yonetici") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+        if (personel) personel.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+        if (tumIsler) tumIsler.style.display = "block";
+
     }
 
+
+    // FORMAN
+    else if (rol === "forman") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+        if (tumIsler) tumIsler.style.display = "block";
+
+    }
+
+
+    // MEKANİK
+    else if (rol === "mekanik") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+
+    }
+
+
+    // ELEKTRİK
+    else if (rol === "elektrik") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+
+    }
+
+
+    // PERSONEL
+    else if (rol === "personel") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+
+    }
+
+
+    // İZLEYİCİ
+    else if (rol === "izleyici") {
+
+        // Sadece dashboard görüntülenir.
+
+    }
+
+}
+    /* ==================================================
+   ROL YETKİLENDİRME
+================================================== */
+
+function rolYetkileriniUygula(rol) {
+
+    const sorunBildir =
+        document.getElementById("sorunBildirButton");
+
+    const mekanik =
+        document.getElementById("mekanikIslerButton");
+
+    const personel =
+        document.getElementById("personelYonetimiButton");
+
+    // Elektrik ve tüm işler şu anda onclick ile çalıştığı
+    // için butonları sınıf üzerinden buluyoruz.
+    const butonlar =
+        document.querySelectorAll(".main-button");
+
+    let elektrik = null;
+    let tumIsler = null;
+
+    butonlar.forEach(function(buton) {
+
+        if (buton.textContent.includes("Elektrik İşler")) {
+            elektrik = buton;
+        }
+
+        if (buton.textContent.includes("Tüm İşler")) {
+            tumIsler = buton;
+        }
+
+    });
+
+
+    // Önce hepsini gizle
+    if (sorunBildir) sorunBildir.style.display = "none";
+    if (mekanik) mekanik.style.display = "none";
+    if (personel) personel.style.display = "none";
+    if (elektrik) elektrik.style.display = "none";
+    if (tumIsler) tumIsler.style.display = "none";
+
+
+    // YÖNETİCİ
+    if (rol === "yonetici") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+        if (personel) personel.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+        if (tumIsler) tumIsler.style.display = "block";
+
+    }
+
+
+    // FORMAN
+    else if (rol === "forman") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+        if (tumIsler) tumIsler.style.display = "block";
+
+    }
+
+
+    // MEKANİK
+    else if (rol === "mekanik") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (mekanik) mekanik.style.display = "block";
+
+    }
+
+
+    // ELEKTRİK
+    else if (rol === "elektrik") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+        if (elektrik) elektrik.style.display = "block";
+
+    }
+
+
+    // PERSONEL
+    else if (rol === "personel") {
+
+        if (sorunBildir) sorunBildir.style.display = "block";
+
+    }
+
+
+    // İZLEYİCİ
+    else if (rol === "izleyici") {
+
+        // Sadece dashboard görüntülenir.
+
+    }
+
+}
     await dashboardSayilariniGetir();
 }
 
