@@ -636,6 +636,135 @@
             </div>
 
         </div>
+                <!-- PERSONEL YÖNETİMİ -->
+
+        <div
+            id="personelYonetimiBolumu"
+            style="display:none; margin-top:30px;"
+        >
+
+            <div class="card">
+
+                <h2>👥 Personel Yönetimi</h2>
+
+                <p>
+                    Personel hesaplarını ve görevlerini yönetin.
+                </p>
+
+                <h3>➕ Yeni Personel Ekle</h3>
+
+                <div class="form-group">
+
+                    <label for="personelAdSoyad">
+                        Ad Soyad
+                    </label>
+
+                    <input
+                        type="text"
+                        id="personelAdSoyad"
+                        class="form-control"
+                        placeholder="Personelin adını ve soyadını giriniz"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="personelEmail">
+                        E-posta
+                    </label>
+
+                    <input
+                        type="email"
+                        id="personelEmail"
+                        class="form-control"
+                        placeholder="personel@ornek.com"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="personelSifre">
+                        Şifre
+                    </label>
+
+                    <input
+                        type="password"
+                        id="personelSifre"
+                        class="form-control"
+                        placeholder="En az 6 karakter"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="personelRol">
+                        Rol
+                    </label>
+
+                    <select
+                        id="personelRol"
+                        class="form-control"
+                    >
+
+                        <option value="personel">
+                            Personel
+                        </option>
+
+                        <option value="mekanik">
+                            Mekanik
+                        </option>
+
+                        <option value="elektrik">
+                            Elektrik
+                        </option>
+
+                        <option value="forman">
+                            Forman
+                        </option>
+
+                        <option value="izleyici">
+                            İzleyici
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    class="save-button"
+                    type="button"
+                    onclick="personelEkle()"
+                >
+                    👤 Personeli Kaydet
+                </button>
+
+
+                <div
+                    id="personelMessage"
+                    style="margin-top:15px; text-align:center; font-weight:bold;"
+                ></div>
+
+            </div>
+
+
+            <div class="card" style="margin-top:20px;">
+
+                <h3>👥 Kayıtlı Personeller</h3>
+
+                <div id="personelListesi">
+                    Personeller yükleniyor...
+                </div>
+
+            </div>
+
+        </div>
     </div>
 
 
@@ -644,104 +773,7 @@
     </footer>
 
 </div>
-    <!-- PERSONEL YÖNETİMİ -->
 
-<div
-    id="personelYonetimiBolumu"
-    style="display:none;"
->
-
-    <div class="section-header">
-        <h2>👥 Personel Yönetimi</h2>
-        <p>Personel hesaplarını ve görevlerini yönetin.</p>
-    </div>
-
-    <!-- PERSONEL EKLEME FORMU -->
-
-    <div class="form-container">
-
-        <h3>➕ Yeni Personel Ekle</h3>
-
-        <div class="form-group">
-            <label>Ad Soyad</label>
-
-            <input
-                type="text"
-                id="personelAdSoyad"
-                class="form-control"
-                placeholder="Personelin adını ve soyadını giriniz"
-            >
-        </div>
-
-
-        <div class="form-group">
-            <label>E-posta</label>
-
-            <input
-                type="email"
-                id="personelEmail"
-                class="form-control"
-                placeholder="personel@ornek.com"
-            >
-        </div>
-
-
-        <div class="form-group">
-            <label>Şifre</label>
-
-            <input
-                type="password"
-                id="personelSifre"
-                class="form-control"
-                placeholder="En az 6 karakter"
-            >
-        </div>
-
-
-        <div class="form-group">
-            <label>Rol</label>
-
-            <select
-                id="personelRol"
-                class="form-control"
-            >
-
-                <option value="personel">Personel</option>
-                <option value="mekanik">Mekanik</option>
-                <option value="elektrik">Elektrik</option>
-                <option value="forman">Forman</option>
-                <option value="izleyici">İzleyici</option>
-
-            </select>
-        </div>
-
-
-        <button
-            class="save-button"
-            type="button"
-            onclick="personelEkle()"
-        >
-            👤 Personeli Kaydet
-        </button>
-
-    </div>
-
-
-    <!-- PERSONEL LİSTESİ -->
-
-    <div class="form-container">
-
-        <h3>👥 Kayıtlı Personeller</h3>
-
-        <div id="personelListesi">
-
-            <p>Personeller yükleniyor...</p>
-
-        </div>
-
-    </div>
-
-</div>
 
 
 <script>
@@ -1261,9 +1293,10 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
     mekanikSorunlariGetir();
 
 });
-    document.getElementById("personelYonetimiButton").addEventListener("click", function () {
+    document.getElementById("personelYonetimiButton").addEventListener("click", async function () {
 
-    const bolum = document.getElementById("personelYonetimiBolumu");
+    const bolum =
+        document.getElementById("personelYonetimiBolumu");
 
     bolum.style.display = "block";
 
@@ -1271,6 +1304,8 @@ document.getElementById("mekanikIslerButton").addEventListener("click", function
         behavior: "smooth",
         block: "start"
     });
+
+    await personelleriGetir();
 
 });
 
@@ -1442,6 +1477,220 @@ async function durumGuncelle(sorunId) {
 }
 
 async function mekanikSorunlariGetir() {
+    /* ==================================================
+   PERSONEL EKLE
+================================================== */
+
+async function personelEkle() {
+
+    const adSoyad =
+        document.getElementById("personelAdSoyad").value.trim();
+
+    const email =
+        document.getElementById("personelEmail").value.trim();
+
+    const sifre =
+        document.getElementById("personelSifre").value;
+
+    const rol =
+        document.getElementById("personelRol").value;
+
+    const message =
+        document.getElementById("personelMessage");
+
+    message.textContent = "";
+    message.style.color = "#dc2626";
+
+
+    if (!adSoyad) {
+
+        message.textContent =
+            "Lütfen ad soyad giriniz.";
+
+        return;
+    }
+
+
+    if (!email) {
+
+        message.textContent =
+            "Lütfen e-posta adresi giriniz.";
+
+        return;
+    }
+
+
+    if (!sifre || sifre.length < 6) {
+
+        message.textContent =
+            "Şifre en az 6 karakter olmalıdır.";
+
+        return;
+    }
+
+
+    message.style.color = "#374151";
+    message.textContent =
+        "Personel oluşturuluyor...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL + "/functions/v1/personel-ekle",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization":
+                            "Bearer " + SUPABASE_KEY
+                    },
+
+                    body: JSON.stringify({
+                        ad_soyad: adSoyad,
+                        email: email,
+                        password: sifre,
+                        rol: rol
+                    })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "PERSONEL EKLEME HATASI:",
+                result
+            );
+
+            message.style.color = "#dc2626";
+
+            message.textContent =
+                result.error ||
+                result.message ||
+                "Personel oluşturulamadı.";
+
+            return;
+        }
+
+
+        message.style.color = "#16a34a";
+
+        message.textContent =
+            "✓ Personel başarıyla oluşturuldu.";
+
+
+        document.getElementById("personelAdSoyad").value = "";
+        document.getElementById("personelEmail").value = "";
+        document.getElementById("personelSifre").value = "";
+        document.getElementById("personelRol").value = "personel";
+
+
+        await personelleriGetir();
+
+    }
+    catch (error) {
+
+        console.error(
+            "PERSONEL EKLEME HATASI:",
+            error
+        );
+
+        message.style.color = "#dc2626";
+
+        message.textContent =
+            "Personel oluşturulurken bağlantı hatası oluştu.";
+
+    }
+
+}
+    /* ==================================================
+   PERSONEL LİSTESİ
+================================================== */
+
+async function personelleriGetir() {
+
+    const liste =
+        document.getElementById("personelListesi");
+
+    if (!liste) return;
+
+    liste.innerHTML =
+        "Personeller yükleniyor...";
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .select("id, ad_soyad, rol")
+            .order("ad_soyad", {
+                ascending: true
+            });
+
+
+    if (error) {
+
+        console.error(
+            "PERSONEL LİSTELEME HATASI:",
+            error
+        );
+
+        liste.innerHTML =
+            "Personeller alınırken hata oluştu.";
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        liste.innerHTML =
+            "Henüz kayıtlı personel bulunmuyor.";
+
+        return;
+    }
+
+
+    liste.innerHTML = "";
+
+
+    data.forEach(function(personel) {
+
+        const kart =
+            document.createElement("div");
+
+        kart.style.background = "#f9fafb";
+        kart.style.border = "1px solid #e5e7eb";
+        kart.style.borderRadius = "10px";
+        kart.style.padding = "15px";
+        kart.style.marginBottom = "10px";
+
+
+        kart.innerHTML = `
+
+            <strong style="font-size:18px;">
+                👤 ${personel.ad_soyad || "-"}
+            </strong>
+
+            <p style="margin:8px 0 0;">
+                <b>Rol:</b>
+                ${personel.rol || "-"}
+            </p>
+
+        `;
+
+
+        liste.appendChild(kart);
+
+    });
+
+}
 
     const liste = document.getElementById("sorunlarListesi");
 
@@ -1519,11 +1768,6 @@ async function mekanikSorunlariGetir() {
 
 }
 
-
-sorunlariGetir();
-
-checkSession();
-sorunlariGetir();
 
 checkSession();
 
