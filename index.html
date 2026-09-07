@@ -450,20 +450,21 @@
 </button>
 
 
-            <button
-                class="main-button"
-                onclick="alert('Elektrik işler ekranını bir sonraki aşamada yapacağız.')"
-            >
-                ⚡ Elektrik İşler
-            </button>
+           <button
+    class="main-button"
+    id="elektrikIslerButton"
+    type="button"
+>
+    ⚡ Elektrik İşler
+</button>
 
-
-            <button
-                class="main-button"
-                onclick="alert('Tüm işler ekranını bir sonraki aşamada yapacağız.')"
-            >
-                📋 Tüm İşler
-            </button>
+           <button
+    class="main-button"
+    id="tumIslerButton"
+    type="button"
+>
+    📋 Tüm İşler
+</button>
 
         </div>
 
@@ -1226,7 +1227,7 @@ async function dashboardSayilariniGetir() {
                 count: "exact",
                 head: true
             })
-            .eq("oncelik", "acil")
+            .eq("oncelik", "oncelikli")
             .neq("durum", "tamamlandi");
 
     document.getElementById("urgentCount").textContent =
@@ -1486,8 +1487,10 @@ async function mekanikSorunlariGetir() {
     const liste =
         document.getElementById("sorunlarListesi");
 
-    liste.innerHTML =
-        "Mekanik sorunlar yükleniyor...";
+    liste.innerHTML = `
+        <h2>🔧 Mekanik İşler</h2>
+        <p>Yükleniyor...</p>
+    `;
 
     const { data, error } =
         await supabaseClient
@@ -1500,23 +1503,89 @@ async function mekanikSorunlariGetir() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "MEKANİK İŞLER HATASI:",
+            error
+        );
 
-        liste.innerHTML =
-            "Mekanik sorunlar yüklenirken hata oluştu.";
+        liste.innerHTML = `
+            <div class="card">
+                <h3>❌ Hata</h3>
+                <p>
+                    Mekanik işler yüklenirken hata oluştu.
+                </p>
+            </div>
+        `;
 
         return;
     }
 
     if (!data || data.length === 0) {
 
-        liste.innerHTML =
-            "Henüz mekanik sorun bulunmuyor.";
+        liste.innerHTML = `
+            <div class="card">
+                <h2>🔧 Mekanik İşler</h2>
+                <p>
+                    Henüz kayıtlı mekanik iş bulunmuyor.
+                </p>
+            </div>
+        `;
 
         return;
     }
 
-    liste.innerHTML = "";
+    const durumSirasi = {
+        "yeni": 1,
+        "isleme_alindi": 2,
+        "islemde": 3,
+        "tekrar_acildi": 4,
+        "tamamlandi": 5
+    };
+
+    data.sort(function(a, b) {
+
+        if (
+            a.oncelik === "oncelikli" &&
+            b.oncelik !== "oncelikli"
+        ) {
+            return -1;
+        }
+
+        if (
+            a.oncelik !== "oncelikli" &&
+            b.oncelik === "oncelikli"
+        ) {
+            return 1;
+        }
+
+        return (
+            (durumSirasi[a.durum] || 99) -
+            (durumSirasi[b.durum] || 99)
+        );
+    });
+
+    let html = `
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+            gap:10px;
+            flex-wrap:wrap;
+        ">
+
+            <div>
+                <h2 style="margin:0;">
+                    🔧 Mekanik İşler
+                </h2>
+
+                <p style="margin:5px 0 0;color:#666;">
+                    Toplam ${data.length} mekanik iş
+                </p>
+            </div>
+
+        </div>
+    `;
 
     data.forEach(function(sorun) {
 
@@ -1524,31 +1593,90 @@ async function mekanikSorunlariGetir() {
             new Date(sorun.created_at)
                 .toLocaleString("tr-TR");
 
-        liste.innerHTML += `
+        let durumYazi = "Bilinmiyor";
+        let durumRenk = "#6b7280";
+
+        if (sorun.durum === "yeni") {
+            durumYazi = "Yeni";
+            durumRenk = "#dc2626";
+        }
+
+        else if (sorun.durum === "isleme_alindi") {
+            durumYazi = "İşleme Alındı";
+            durumRenk = "#ea580c";
+        }
+
+        else if (sorun.durum === "islemde") {
+            durumYazi = "İşlemde";
+            durumRenk = "#ca8a04";
+        }
+
+        else if (sorun.durum === "tamamlandi") {
+            durumYazi = "Tamamlandı";
+            durumRenk = "#16a34a";
+        }
+
+        else if (sorun.durum === "tekrar_acildi") {
+            durumYazi = "Tekrar Açıldı";
+            durumRenk = "#2563eb";
+        }
+
+        const oncelikYazi =
+            sorun.oncelik === "oncelikli"
+                ? "⚠️ Öncelikli"
+                : "Normal";
+
+        html += `
 
             <div
                 class="card"
-                style="margin-bottom:15px; cursor:pointer;"
+                style="
+                    margin-bottom:15px;
+                    cursor:pointer;
+                    border-left:6px solid ${durumRenk};
+                "
                 onclick="sorunDetayAc(${sorun.id})"
             >
 
-                <strong>
-                    ${sorun.kumes || "Kümes belirtilmemiş"}
-                </strong>
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    gap:10px;
+                    flex-wrap:wrap;
+                ">
 
-                <p>
-                    <b>Ekipman:</b>
-                    ${sorun.ekipman || "-"}
-                </p>
+                    <div>
+
+                        <strong style="
+                            font-size:19px;
+                        ">
+                            ${sorun.kumes || "Kümes belirtilmemiş"}
+                        </strong>
+
+                        <p style="margin:6px 0;">
+                            🔧 ${sorun.ekipman || "-"}
+                        </p>
+
+                    </div>
+
+                    <span style="
+                        background:${durumRenk};
+                        color:white;
+                        padding:6px 10px;
+                        border-radius:20px;
+                        font-size:13px;
+                        font-weight:bold;
+                        white-space:nowrap;
+                    ">
+                        ${durumYazi}
+                    </span>
+
+                </div>
 
                 <p>
                     <b>Öncelik:</b>
-                    ${sorun.oncelik || "-"}
-                </p>
-
-                <p>
-                    <b>Durum:</b>
-                    ${sorun.durum || "-"}
+                    ${oncelikYazi}
                 </p>
 
                 <p>
@@ -1556,16 +1684,42 @@ async function mekanikSorunlariGetir() {
                     ${sorun.aciklama || "-"}
                 </p>
 
-                <small>${tarih}</small>
+                <small style="color:#666;">
+                    📅 ${tarih}
+                </small>
+
+                ${
+                    sorun.yapilan_islem
+                    ? `
+                        <p style="
+                            margin-top:12px;
+                            padding-top:12px;
+                            border-top:1px solid #e5e7eb;
+                        ">
+                            <b>🔧 Yapılan İşlem:</b><br>
+                            ${sorun.yapilan_islem}
+                        </p>
+                    `
+                    : ""
+                }
+
+                ${
+                    sorun.kullanilan_parca
+                    ? `
+                        <p>
+                            <b>🔩 Kullanılan Parça:</b><br>
+                            ${sorun.kullanilan_parca}
+                        </p>
+                    `
+                    : ""
+                }
 
             </div>
-
         `;
-
     });
 
+    liste.innerHTML = html;
 }
-
 
 /* ==================================================
    PERSONEL EKLE
