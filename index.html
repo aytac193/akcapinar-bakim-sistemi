@@ -849,11 +849,8 @@ async function login() {
 
 async function showApp(user) {
 
-    document.getElementById("loginScreen").style.display =
-        "none";
-
-    document.getElementById("appScreen").style.display =
-        "block";
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appScreen").style.display = "block";
 
     const result =
         await supabaseClient
@@ -862,14 +859,113 @@ async function showApp(user) {
             .eq("id", user.id)
             .single();
 
-    if (!result.error && result.data) {
+    if (result.error || !result.data) {
 
-        document.getElementById("welcomeText").textContent =
-            "Hoş Geldiniz, " +
-            result.data.ad_soyad;
+        console.error(
+            "PROFİL BİLGİSİ ALINAMADI:",
+            result.error
+        );
+
+        alert("Kullanıcı bilgileri alınamadı.");
+        return;
     }
 
+    const adSoyad = result.data.ad_soyad;
+    const rol = result.data.rol;
+
+    document.getElementById("welcomeText").textContent =
+        "Hoş Geldiniz, " + adSoyad;
+
+    /* ==============================================
+       TÜM BUTONLARI ÖNCE GİZLE
+    ============================================== */
+
+    document.getElementById("sorunBildirButton").style.display = "none";
+    document.getElementById("mekanikIslerButton").style.display = "none";
+    document.getElementById("elektrikIslerButton").style.display = "none";
+    document.getElementById("tumIslerButton").style.display = "none";
+    document.getElementById("personelYonetimiButton").style.display = "none";
+
+
+    /* ==============================================
+       YÖNETİCİ
+    ============================================== */
+
+    if (rol === "yonetici") {
+
+        document.getElementById("sorunBildirButton").style.display = "block";
+        document.getElementById("mekanikIslerButton").style.display = "block";
+        document.getElementById("elektrikIslerButton").style.display = "block";
+        document.getElementById("tumIslerButton").style.display = "block";
+        document.getElementById("personelYonetimiButton").style.display = "block";
+
+    }
+
+
+    /* ==============================================
+       FORMAN
+    ============================================== */
+
+    else if (rol === "forman") {
+
+        document.getElementById("sorunBildirButton").style.display = "block";
+        document.getElementById("mekanikIslerButton").style.display = "block";
+        document.getElementById("elektrikIslerButton").style.display = "block";
+        document.getElementById("tumIslerButton").style.display = "block";
+
+    }
+
+
+    /* ==============================================
+       MEKANİK
+    ============================================== */
+
+    else if (rol === "mekanik") {
+
+        document.getElementById("sorunBildirButton").style.display = "block";
+        document.getElementById("mekanikIslerButton").style.display = "block";
+
+    }
+
+
+    /* ==============================================
+       ELEKTRİK
+    ============================================== */
+
+    else if (rol === "elektrik") {
+
+        document.getElementById("sorunBildirButton").style.display = "block";
+        document.getElementById("elektrikIslerButton").style.display = "block";
+
+    }
+
+
+    /* ==============================================
+       PERSONEL
+    ============================================== */
+
+    else if (rol === "personel") {
+
+        document.getElementById("sorunBildirButton").style.display = "block";
+
+    }
+
+
+    /* ==============================================
+       İZLEYİCİ
+    ============================================== */
+
+    else if (rol === "izleyici") {
+
+        document.getElementById("mekanikIslerButton").style.display = "block";
+        document.getElementById("elektrikIslerButton").style.display = "block";
+        document.getElementById("tumIslerButton").style.display = "block";
+
+    }
+
+
     await dashboardSayilariniGetir();
+
 }
 /* ==================================================
    ÇIKIŞ
