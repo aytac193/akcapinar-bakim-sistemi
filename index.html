@@ -1479,7 +1479,7 @@ async function durumGuncelle(sorunId) {
 }
 
 /* ==================================================
-   MEKANİK SORUNLARI GETİR
+   MEKANİK İŞLER
 ================================================== */
 
 async function mekanikSorunlariGetir() {
@@ -1534,6 +1534,10 @@ async function mekanikSorunlariGetir() {
         return;
     }
 
+    /* ==============================================
+       DURUM SIRALAMASI
+    ============================================== */
+
     const durumSirasi = {
         "yeni": 1,
         "isleme_alindi": 2,
@@ -1541,6 +1545,10 @@ async function mekanikSorunlariGetir() {
         "tekrar_acildi": 4,
         "tamamlandi": 5
     };
+
+    /* ==============================================
+       ÖNCELİKLİLERİ VE DURUMLARI SIRALA
+    ============================================== */
 
     data.sort(function(a, b) {
 
@@ -1562,30 +1570,136 @@ async function mekanikSorunlariGetir() {
             (durumSirasi[a.durum] || 99) -
             (durumSirasi[b.durum] || 99)
         );
+
     });
 
+    /* ==============================================
+       DURUM SAYILARI
+    ============================================== */
+
+    let yeniSayisi = 0;
+    let islemeAlindiSayisi = 0;
+    let islemdeSayisi = 0;
+    let tekrarAcildiSayisi = 0;
+    let tamamlandiSayisi = 0;
+
+    data.forEach(function(sorun) {
+
+        if (sorun.durum === "yeni") {
+            yeniSayisi++;
+        }
+
+        else if (sorun.durum === "isleme_alindi") {
+            islemeAlindiSayisi++;
+        }
+
+        else if (sorun.durum === "islemde") {
+            islemdeSayisi++;
+        }
+
+        else if (sorun.durum === "tekrar_acildi") {
+            tekrarAcildiSayisi++;
+        }
+
+        else if (sorun.durum === "tamamlandi") {
+            tamamlandiSayisi++;
+        }
+
+    });
+
+    /* ==============================================
+       ÜST BİLGİ ALANI
+    ============================================== */
+
     let html = `
+
         <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
             margin-bottom:20px;
-            gap:10px;
-            flex-wrap:wrap;
         ">
 
-            <div>
-                <h2 style="margin:0;">
-                    🔧 Mekanik İşler
-                </h2>
+            <h2 style="
+                margin:0;
+            ">
+                🔧 Mekanik İşler
+            </h2>
 
-                <p style="margin:5px 0 0;color:#666;">
-                    Toplam ${data.length} mekanik iş
-                </p>
+            <p style="
+                margin:6px 0 15px;
+                color:#666;
+            ">
+                Toplam ${data.length} mekanik iş
+            </p>
+
+            <div style="
+                display:flex;
+                gap:8px;
+                flex-wrap:wrap;
+            ">
+
+                <span style="
+                    background:#dc2626;
+                    color:white;
+                    padding:7px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                ">
+                    🔴 Yeni: ${yeniSayisi}
+                </span>
+
+                <span style="
+                    background:#ea580c;
+                    color:white;
+                    padding:7px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                ">
+                    🟠 İşleme Alındı: ${islemeAlindiSayisi}
+                </span>
+
+                <span style="
+                    background:#ca8a04;
+                    color:white;
+                    padding:7px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                ">
+                    🟡 İşlemde: ${islemdeSayisi}
+                </span>
+
+                <span style="
+                    background:#2563eb;
+                    color:white;
+                    padding:7px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                ">
+                    🔵 Tekrar Açıldı: ${tekrarAcildiSayisi}
+                </span>
+
+                <span style="
+                    background:#16a34a;
+                    color:white;
+                    padding:7px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                ">
+                    🟢 Tamamlandı: ${tamamlandiSayisi}
+                </span>
+
             </div>
 
         </div>
+
     `;
+
+    /* ==============================================
+       MEKANİK İŞ KARTLARI
+    ============================================== */
 
     data.forEach(function(sorun) {
 
@@ -1597,28 +1711,38 @@ async function mekanikSorunlariGetir() {
         let durumRenk = "#6b7280";
 
         if (sorun.durum === "yeni") {
+
             durumYazi = "Yeni";
             durumRenk = "#dc2626";
+
         }
 
         else if (sorun.durum === "isleme_alindi") {
+
             durumYazi = "İşleme Alındı";
             durumRenk = "#ea580c";
+
         }
 
         else if (sorun.durum === "islemde") {
+
             durumYazi = "İşlemde";
             durumRenk = "#ca8a04";
-        }
 
-        else if (sorun.durum === "tamamlandi") {
-            durumYazi = "Tamamlandı";
-            durumRenk = "#16a34a";
         }
 
         else if (sorun.durum === "tekrar_acildi") {
+
             durumYazi = "Tekrar Açıldı";
             durumRenk = "#2563eb";
+
+        }
+
+        else if (sorun.durum === "tamamlandi") {
+
+            durumYazi = "Tamamlandı";
+            durumRenk = "#16a34a";
+
         }
 
         const oncelikYazi =
@@ -1654,7 +1778,9 @@ async function mekanikSorunlariGetir() {
                             ${sorun.kumes || "Kümes belirtilmemiş"}
                         </strong>
 
-                        <p style="margin:6px 0;">
+                        <p style="
+                            margin:6px 0;
+                        ">
                             🔧 ${sorun.ekipman || "-"}
                         </p>
 
@@ -1684,7 +1810,9 @@ async function mekanikSorunlariGetir() {
                     ${sorun.aciklama || "-"}
                 </p>
 
-                <small style="color:#666;">
+                <small style="
+                    color:#666;
+                ">
                     📅 ${tarih}
                 </small>
 
@@ -1715,12 +1843,14 @@ async function mekanikSorunlariGetir() {
                 }
 
             </div>
+
         `;
+
     });
 
     liste.innerHTML = html;
-}
 
+}
 /* ==================================================
    PERSONEL EKLE
 ================================================== */
