@@ -1567,26 +1567,56 @@ async function sorunDetayAc(sorunId) {
         </div>
 
     `;
-
+    
 }
 async function durumGuncelle(sorunId) {
-    
+
     const yeniDurum =
         document.getElementById("durumSecimi").value;
+
     const yapilanIslem =
         document.getElementById("yapilanIslem").value.trim();
-    const kullanilanParca =
-    document.getElementById("kullanilanParca").value.trim();
 
+    const kullanilanParca =
+        document.getElementById("kullanilanParca").value.trim();
+
+
+    // 1. Mevcut arızanın eski durumunu al
+    const { data: eskiSorun, error: eskiHata } =
+        await supabaseClient
+            .from("sorunlar")
+            .select("durum")
+            .eq("id", sorunId)
+            .single();
+
+
+    if (eskiHata) {
+
+        console.error(eskiHata);
+
+        alert("Mevcut durum alınamadı: " + eskiHata.message);
+
+        return;
+    }
+
+
+    // 2. Giriş yapan kullanıcının ID'sini al
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+
+    // 3. Arızayı güncelle
     const { error } = await supabaseClient
         .from("sorunlar")
         .update({
-    durum: yeniDurum,
-    yapilan_islem: yapilanIslem,
-    kullanilan_parca: kullanilanParca,
-    updated_at: new Date().toISOString()
-})
+            durum: yeniDurum,
+            yapilan_islem: yapilanIslem,
+            kullanilan_parca: kullanilanParca,
+            updated_at: new Date().toISOString()
+        })
         .eq("id", sorunId);
+
 
     if (error) {
 
@@ -1597,11 +1627,44 @@ async function durumGuncelle(sorunId) {
         return;
     }
 
+
+    // 4. İşlem geçmişine kayıt ekle
+    const { error: gecmisHatasi } =
+        await supabaseClient
+            .from("islem_gecmisi")
+            .insert({
+                sorun_id: sorunId,
+                yapan_id: user ? user.id : null,
+                eski_durum: eskiSorun.durum,
+                yeni_durum: yeniDurum,
+                yapilan_islem: yapilanIslem,
+                kullanilan_parca: kullanilanParca
+            });
+
+
+    if (gecmisHatasi) {
+
+        console.error(gecmisHatasi);
+
+        alert(
+            "Arıza güncellendi ancak işlem geçmişi kaydedilemedi: "
+            + gecmisHatasi.message
+        );
+
+        return;
+    }
+
+
     alert("Durum başarıyla güncellendi.");
 
+
+    // 5. Dashboard sayılarını yenile
     await dashboardSayilariniGetir();
 
+
+    // 6. Tüm İşler listesine geri dön
     await tumSorunlariGetir();
+
 }
 
 /* ==================================================
