@@ -3149,10 +3149,18 @@ async function personelEkle() {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + session.access_token
+}
 
-                        "Authorization":
-                            "Bearer " + SUPABASE_KEY
+                        const {
+    data: { session }
+} = await supabaseClient.auth.getSession();
+
+if (!session) {
+    alert("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
+    return;
+}
                     },
 
                     body: JSON.stringify({
