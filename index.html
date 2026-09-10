@@ -2350,9 +2350,8 @@ async function elektrikSorunlariGetir() {
     liste.innerHTML = html;
 
 }
-    /* ==================================================
-   TÜM İŞLER
-================================================== */
+   
+
 /* ==================================================
    TÜM İŞLER
 ================================================== */
@@ -2379,17 +2378,12 @@ async function tumSorunlariGetir() {
 
     if (error) {
 
-        console.error(
-            "TÜM İŞLER HATASI:",
-            error
-        );
+        console.error(error);
 
         liste.innerHTML = `
             <div class="card">
                 <h3>❌ Hata</h3>
-                <p>
-                    Tüm işler yüklenirken hata oluştu.
-                </p>
+                <p>Tüm işler alınamadı.</p>
             </div>
         `;
 
@@ -2400,10 +2394,8 @@ async function tumSorunlariGetir() {
 
         liste.innerHTML = `
             <div class="card">
-                <h2>📋 Tüm İşler</h2>
-                <p>
-                    Henüz kayıtlı iş bulunmuyor.
-                </p>
+                <h3>📋 İş Bulunamadı</h3>
+                <p>Henüz kayıtlı bir iş bulunmuyor.</p>
             </div>
         `;
 
@@ -2413,26 +2405,93 @@ async function tumSorunlariGetir() {
     tumIslerVerisi = data;
 
     tumIsleriGoster();
-
 }
 
-    /* ==============================================
-       DURUM SIRALAMASI
-    ============================================== */
+
+function tumIsleriGoster() {
+
+    const liste =
+        document.getElementById("sorunlarListesi");
+
+    const eskiTur =
+        document.getElementById("tumTurFiltresi")?.value || "hepsi";
+
+    const eskiDurum =
+        document.getElementById("tumDurumFiltresi")?.value || "hepsi";
+
+    const eskiOncelik =
+        document.getElementById("tumOncelikFiltresi")?.value || "hepsi";
+
+    const eskiArama =
+        document.getElementById("tumArama")?.value || "";
+
+    let isler = [...tumIslerVerisi];
+
+
+    /* =========================
+       FİLTRELEME
+       ========================= */
+
+    if (eskiTur !== "hepsi") {
+
+        isler = isler.filter(
+            s => s.sorun_turu === eskiTur
+        );
+    }
+
+    if (eskiDurum !== "hepsi") {
+
+        isler = isler.filter(
+            s => s.durum === eskiDurum
+        );
+    }
+
+    if (eskiOncelik !== "hepsi") {
+
+        isler = isler.filter(
+            s => s.oncelik === eskiOncelik
+        );
+    }
+
+
+    const arama =
+        eskiArama
+            .trim()
+            .toLocaleLowerCase("tr-TR");
+
+    if (arama) {
+
+        isler = isler.filter(s => {
+
+            const metin = `
+                ${s.kumes || ""}
+                ${s.ekipman || ""}
+                ${s.aciklama || ""}
+                ${s.yapilan_islem || ""}
+                ${s.kullanilan_parca || ""}
+            `.toLocaleLowerCase("tr-TR");
+
+            return metin.includes(arama);
+        });
+    }
+
+
+    /* =========================
+       SIRALAMA
+       ========================= */
 
     const durumSirasi = {
-        "yeni": 1,
-        "isleme_alindi": 2,
-        "islemde": 3,
-        "tekrar_acildi": 4,
-        "tamamlandi": 5
+
+        yeni: 1,
+        isleme_alindi: 2,
+        islemde: 3,
+        tekrar_acildi: 4,
+        tamamlandi: 5
+
     };
 
-    /* ==============================================
-       ÖNCELİKLİLER + DURUM
-    ============================================== */
 
-    data.sort(function(a, b) {
+    isler.sort((a, b) => {
 
         if (
             a.oncelik === "oncelikli" &&
@@ -2448,342 +2507,390 @@ async function tumSorunlariGetir() {
             return 1;
         }
 
-        return (
-            (durumSirasi[a.durum] || 99) -
-            (durumSirasi[b.durum] || 99)
-        );
+
+        const durumA =
+            durumSirasi[a.durum] || 99;
+
+        const durumB =
+            durumSirasi[b.durum] || 99;
+
+        if (durumA !== durumB) {
+            return durumA - durumB;
+        }
+
+
+        return new Date(b.created_at) -
+               new Date(a.created_at);
 
     });
 
-    /* ==============================================
-       SAYILAR
-    ============================================== */
 
-    let mekanikSayisi = 0;
-    let elektrikSayisi = 0;
+    /* =========================
+       DURUM İSİMLERİ
+       ========================= */
 
-    let yeniSayisi = 0;
-    let islemeAlindiSayisi = 0;
-    let islemdeSayisi = 0;
-    let tekrarAcildiSayisi = 0;
-    let tamamlandiSayisi = 0;
+    const durumAdi = {
 
-    data.forEach(function(sorun) {
+        yeni: "Yeni",
 
-        if (sorun.sorun_turu === "mekanik") {
-            mekanikSayisi++;
-        }
+        isleme_alindi:
+            "İşleme Alındı",
 
-        else if (sorun.sorun_turu === "elektrik") {
-            elektrikSayisi++;
-        }
+        islemde:
+            "İşlemde",
 
-        if (sorun.durum === "yeni") {
-            yeniSayisi++;
-        }
+        tekrar_acildi:
+            "Tekrar Açıldı",
 
-        else if (sorun.durum === "isleme_alindi") {
-            islemeAlindiSayisi++;
-        }
+        tamamlandi:
+            "Tamamlandı"
 
-        else if (sorun.durum === "islemde") {
-            islemdeSayisi++;
-        }
+    };
 
-        else if (sorun.durum === "tekrar_acildi") {
-            tekrarAcildiSayisi++;
-        }
 
-        else if (sorun.durum === "tamamlandi") {
-            tamamlandiSayisi++;
-        }
+    /* =========================
+       ÖZET
+       ========================= */
 
-    });
+    const mekanikSayisi =
+        isler.filter(
+            s => s.sorun_turu === "mekanik"
+        ).length;
 
-    /* ==============================================
-       ÜST BİLGİ
-    ============================================== */
 
-    let html = `
+    const elektrikSayisi =
+        isler.filter(
+            s => s.sorun_turu === "elektrik"
+        ).length;
 
-        <div style="
-            margin-bottom:20px;
-        ">
 
-            <h2 style="
-                margin:0;
-            ">
-                📋 Tüm İşler
-            </h2>
+    const yeniSayisi =
+        isler.filter(
+            s => s.durum === "yeni"
+        ).length;
 
-            <p style="
-                margin:6px 0 15px;
-                color:#666;
-            ">
-                Toplam ${data.length} iş
-            </p>
+
+    const acilSayisi =
+        isler.filter(
+            s =>
+                s.oncelik === "oncelikli" &&
+                s.durum !== "tamamlandi"
+        ).length;
+
+
+    /* =========================
+       EKRANI OLUŞTUR
+       ========================= */
+
+    liste.innerHTML = `
+
+        <h2>📋 Tüm İşler</h2>
+
+        <div class="card">
+
+            <h3>🔎 Filtrele</h3>
 
             <div style="
                 display:flex;
-                gap:8px;
                 flex-wrap:wrap;
-                margin-bottom:10px;
+                gap:10px;
+                margin-top:10px;
             ">
 
-                <span style="
-                    background:#374151;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🔧 Mekanik: ${mekanikSayisi}
-                </span>
+                <select
+                    id="tumTurFiltresi"
+                    onchange="tumIsleriGoster()"
+                    style="padding:10px;"
+                >
 
-                <span style="
-                    background:#374151;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    ⚡ Elektrik: ${elektrikSayisi}
-                </span>
+                    <option value="hepsi">
+                        Tüm Türler
+                    </option>
 
-            </div>
+                    <option value="mekanik">
+                        🔧 Mekanik
+                    </option>
 
-            <div style="
-                display:flex;
-                gap:8px;
-                flex-wrap:wrap;
-            ">
+                    <option value="elektrik">
+                        ⚡ Elektrik
+                    </option>
 
-                <span style="
-                    background:#dc2626;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🔴 Yeni: ${yeniSayisi}
-                </span>
+                </select>
 
-                <span style="
-                    background:#ea580c;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🟠 İşleme Alındı: ${islemeAlindiSayisi}
-                </span>
 
-                <span style="
-                    background:#ca8a04;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🟡 İşlemde: ${islemdeSayisi}
-                </span>
+                <select
+                    id="tumDurumFiltresi"
+                    onchange="tumIsleriGoster()"
+                    style="padding:10px;"
+                >
 
-                <span style="
-                    background:#2563eb;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🔵 Tekrar Açıldı: ${tekrarAcildiSayisi}
-                </span>
+                    <option value="hepsi">
+                        Tüm Durumlar
+                    </option>
 
-                <span style="
-                    background:#16a34a;
-                    color:white;
-                    padding:7px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                ">
-                    🟢 Tamamlandı: ${tamamlandiSayisi}
-                </span>
+                    <option value="yeni">
+                        Yeni
+                    </option>
+
+                    <option value="isleme_alindi">
+                        İşleme Alındı
+                    </option>
+
+                    <option value="islemde">
+                        İşlemde
+                    </option>
+
+                    <option value="tekrar_acildi">
+                        Tekrar Açıldı
+                    </option>
+
+                    <option value="tamamlandi">
+                        Tamamlandı
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="tumOncelikFiltresi"
+                    onchange="tumIsleriGoster()"
+                    style="padding:10px;"
+                >
+
+                    <option value="hepsi">
+                        Tüm Öncelikler
+                    </option>
+
+                    <option value="oncelikli">
+                        ⚠️ Sadece Öncelikli
+                    </option>
+
+                </select>
+
+
+                <input
+                    type="text"
+                    id="tumArama"
+                    value=""
+                    placeholder="🔍 Kümes, ekipman veya açıklama ara"
+                    style="
+                        padding:10px;
+                        min-width:250px;
+                        flex:1;
+                    "
+                >
+
+
+                <button
+                    type="button"
+                    onclick="tumIsleriGoster()"
+                    style="padding:10px 16px;"
+                >
+                    🔍 Ara
+                </button>
 
             </div>
 
         </div>
 
+
+        <div class="card">
+
+            <div style="
+                display:flex;
+                flex-wrap:wrap;
+                gap:10px;
+            ">
+
+                <span>
+                    📊 Gösterilen:
+                    <b>${isler.length}</b>
+                </span>
+
+                <span>
+                    / Toplam:
+                    <b>${tumIslerVerisi.length}</b>
+                </span>
+
+                <span>
+                    🔧 Mekanik:
+                    <b>${mekanikSayisi}</b>
+                </span>
+
+                <span>
+                    ⚡ Elektrik:
+                    <b>${elektrikSayisi}</b>
+                </span>
+
+                <span>
+                    🆕 Yeni:
+                    <b>${yeniSayisi}</b>
+                </span>
+
+                <span>
+                    🚨 Açık Öncelikli:
+                    <b>${acilSayisi}</b>
+                </span>
+
+            </div>
+
+        </div>
     `;
 
-    /* ==============================================
-       İŞ KARTLARI
-    ============================================== */
 
-    data.forEach(function(sorun) {
+    /* =========================
+       DEĞERLERİ GERİ YÜKLE
+       ========================= */
 
-        const tarih =
-            new Date(sorun.created_at)
-                .toLocaleString("tr-TR");
+    document.getElementById("tumTurFiltresi").value =
+        eskiTur;
 
-        let durumYazi = "Bilinmiyor";
-        let durumRenk = "#6b7280";
+    document.getElementById("tumDurumFiltresi").value =
+        eskiDurum;
 
-        if (sorun.durum === "yeni") {
+    document.getElementById("tumOncelikFiltresi").value =
+        eskiOncelik;
 
-            durumYazi = "Yeni";
-            durumRenk = "#dc2626";
+    document.getElementById("tumArama").value =
+        eskiArama;
 
-        }
 
-        else if (sorun.durum === "isleme_alindi") {
+    /* =========================
+       SONUÇ YOKSA
+       ========================= */
 
-            durumYazi = "İşleme Alındı";
-            durumRenk = "#ea580c";
+    if (isler.length === 0) {
 
-        }
+        liste.innerHTML += `
 
-        else if (sorun.durum === "islemde") {
+            <div class="card">
 
-            durumYazi = "İşlemde";
-            durumRenk = "#ca8a04";
+                <h3>🔍 Sonuç bulunamadı</h3>
 
-        }
+                <p>
+                    Seçtiğiniz filtrelere uygun iş bulunamadı.
+                </p>
 
-        else if (sorun.durum === "tekrar_acildi") {
+            </div>
 
-            durumYazi = "Tekrar Açıldı";
-            durumRenk = "#2563eb";
+        `;
 
-        }
+        return;
+    }
 
-        else if (sorun.durum === "tamamlandi") {
 
-            durumYazi = "Tamamlandı";
-            durumRenk = "#16a34a";
+    /* =========================
+       İŞLERİ GÖSTER
+       ========================= */
 
-        }
+    isler.forEach(sorun => {
 
-        let turYazi = "Bilinmiyor";
-        let turIkon = "📋";
+        const tur =
+            sorun.sorun_turu === "mekanik"
+                ? "🔧 Mekanik"
+                : "⚡ Elektrik";
 
-        if (sorun.sorun_turu === "mekanik") {
 
-            turYazi = "Mekanik";
-            turIkon = "🔧";
+        const durum =
+            durumAdi[sorun.durum]
+                || sorun.durum
+                || "Bilinmiyor";
 
-        }
 
-        else if (sorun.sorun_turu === "elektrik") {
-
-            turYazi = "Elektrik";
-            turIkon = "⚡";
-
-        }
-
-        const oncelikYazi =
+        const oncelik =
             sorun.oncelik === "oncelikli"
                 ? "⚠️ Öncelikli"
                 : "Normal";
 
-        html += `
+
+        const tarih =
+            sorun.created_at
+                ? new Date(
+                    sorun.created_at
+                ).toLocaleString("tr-TR")
+                : "-";
+
+
+        liste.innerHTML += `
 
             <div
                 class="card"
+                onclick="sorunDetayAc('${sorun.id}')"
                 style="
-                    margin-bottom:15px;
                     cursor:pointer;
-                    border-left:6px solid ${durumRenk};
+                    margin-top:12px;
                 "
-                onclick="sorunDetayAc(${sorun.id})"
             >
 
                 <div style="
                     display:flex;
                     justify-content:space-between;
-                    align-items:flex-start;
-                    gap:10px;
                     flex-wrap:wrap;
+                    gap:8px;
                 ">
 
-                    <div>
+                    <h3>
+                        ${tur}
+                    </h3>
 
-                        <strong style="
-                            font-size:19px;
-                        ">
-                            ${sorun.kumes || "Kümes belirtilmemiş"}
-                        </strong>
-
-                        <p style="
-                            margin:6px 0;
-                        ">
-                            ${turIkon}
-                            ${turYazi}
-                            -
-                            ${sorun.ekipman || "-"}
-                        </p>
-
-                    </div>
-
-                    <span style="
-                        background:${durumRenk};
-                        color:white;
-                        padding:6px 10px;
-                        border-radius:20px;
-                        font-size:13px;
-                        font-weight:bold;
-                        white-space:nowrap;
-                    ">
-                        ${durumYazi}
-                    </span>
+                    <b>
+                        ${oncelik}
+                    </b>
 
                 </div>
 
-                <p>
-                    <b>Öncelik:</b>
-                    ${oncelikYazi}
-                </p>
 
                 <p>
-                    <b>Açıklama:</b>
+                    <b>📍 Kümes:</b>
+                    ${sorun.kumes || "-"}
+                </p>
+
+
+                <p>
+                    <b>⚙️ Ekipman:</b>
+                    ${sorun.ekipman || "-"}
+                </p>
+
+
+                <p>
+                    <b>📌 Durum:</b>
+                    ${durum}
+                </p>
+
+
+                <p>
+                    <b>📝 Açıklama:</b>
                     ${sorun.aciklama || "-"}
                 </p>
 
-                <small style="
-                    color:#666;
-                ">
-                    📅 ${tarih}
-                </small>
+
+                <p>
+                    <b>📅 Tarih:</b>
+                    ${tarih}
+                </p>
+
 
                 ${
                     sorun.yapilan_islem
-                    ? `
-                        <p style="
-                            margin-top:12px;
-                            padding-top:12px;
-                            border-top:1px solid #e5e7eb;
-                        ">
-                            <b>🔧 Yapılan İşlem:</b><br>
-                            ${sorun.yapilan_islem}
-                        </p>
-                    `
-                    : ""
+                        ? `
+                            <p>
+                                <b>🛠️ Yapılan İşlem:</b>
+                                ${sorun.yapilan_islem}
+                            </p>
+                          `
+                        : ""
                 }
+
 
                 ${
                     sorun.kullanilan_parca
-                    ? `
-                        <p>
-                            <b>🔩 Kullanılan Parça:</b><br>
-                            ${sorun.kullanilan_parca}
-                        </p>
-                    `
-                    : ""
+                        ? `
+                            <p>
+                                <b>🔩 Kullanılan Parça:</b>
+                                ${sorun.kullanilan_parca}
+                            </p>
+                          `
+                        : ""
                 }
 
             </div>
@@ -2791,8 +2898,6 @@ async function tumSorunlariGetir() {
         `;
 
     });
-
-    liste.innerHTML = html;
 
 }
 /* ==================================================
