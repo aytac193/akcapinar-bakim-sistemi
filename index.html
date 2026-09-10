@@ -1465,20 +1465,22 @@ async function sorunDetayAc(sorunId) {
 
 
     // 2. İşlem geçmişini getir
-    console.log("GEÇMİŞ İÇİN SORUN ID:", sorunId, typeof sorunId);
-    const { data: gecmis, error: gecmisHatasi } =
-        await supabaseClient
-            .from("islem_gecmisi")
-            .select("*")
-            .eq("sorun_id", sorunId)
-            .order("created_at", { ascending: false });
-    console.log("GEÇMİŞ VERİSİ:", gecmis);
+console.log("GEÇMİŞ İÇİN SORUN ID:", sorunId, typeof sorunId);
+
+const { data: gecmis, error: gecmisHatasi } =
+    await supabaseClient
+        .from("islem_gecmisi")
+        .select(`
+            *,
+            profiles (
+                ad_soyad
+            )
+        `)
+        .eq("sorun_id", sorunId)
+        .order("created_at", { ascending: false });
+
+console.log("GEÇMİŞ VERİSİ:", gecmis);
 console.log("GEÇMİŞ HATASI:", gecmisHatasi);
-
-
-    if (gecmisHatasi) {
-
-        console.error("İşlem geçmişi alınamadı:", gecmisHatasi);
 
     }
 
