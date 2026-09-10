@@ -3141,6 +3141,30 @@ async function personelEkle() {
 
     try {
 
+        /* =========================================
+           MEVCUT OTURUMU AL
+        ========================================= */
+
+        const {
+            data: { session }
+        } = await supabaseClient.auth.getSession();
+
+
+        if (!session) {
+
+            message.style.color = "#dc2626";
+
+            message.textContent =
+                "Oturum bulunamadı. Lütfen tekrar giriş yapın.";
+
+            return;
+        }
+
+
+        /* =========================================
+           EDGE FUNCTION ÇAĞRISI
+        ========================================= */
+
         const response =
             await fetch(
                 SUPABASE_URL +
@@ -3149,18 +3173,9 @@ async function personelEkle() {
                     method: "POST",
 
                     headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + session.access_token
-}
-
-                        const {
-    data: { session }
-} = await supabaseClient.auth.getSession();
-
-if (!session) {
-    alert("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
-    return;
-}
+                        "Content-Type": "application/json",
+                        "Authorization":
+                            "Bearer " + session.access_token
                     },
 
                     body: JSON.stringify({
@@ -3200,6 +3215,10 @@ if (!session) {
             return;
         }
 
+
+        /* =========================================
+           BAŞARILI
+        ========================================= */
 
         message.style.color =
             "#16a34a";
@@ -3244,8 +3263,6 @@ if (!session) {
     }
 
 }
-
-
 /* ==================================================
    PERSONEL LİSTESİ
 ================================================== */
