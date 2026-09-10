@@ -1463,11 +1463,12 @@ async function sorunDetayAc(sorunId) {
         return;
     }
 
-{
-    // 2. İşlem geçmişini getir
+// 2. İşlem geçmişini getir
+let gecmis = [];
+
 console.log("GEÇMİŞ İÇİN SORUN ID:", sorunId, typeof sorunId);
 
-const { data: gecmis, error: gecmisHatasi } =
+const { data: gecmisData, error: gecmisHatasi } =
     await supabaseClient
         .from("islem_gecmisi")
         .select(`
@@ -1479,9 +1480,17 @@ const { data: gecmis, error: gecmisHatasi } =
         .eq("sorun_id", sorunId)
         .order("created_at", { ascending: false });
 
+if (gecmisHatasi) {
+
+    console.error("GEÇMİŞ HATASI:", gecmisHatasi);
+
+} else {
+
+    gecmis = gecmisData || [];
+
+}
+
 console.log("GEÇMİŞ VERİSİ:", gecmis);
-console.log("GEÇMİŞ HATASI:", gecmisHatasi);
-    }
 
     
 
