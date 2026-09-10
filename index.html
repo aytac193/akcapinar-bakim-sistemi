@@ -2353,7 +2353,12 @@ async function elektrikSorunlariGetir() {
     /* ==================================================
    TÜM İŞLER
 ================================================== */
+/* ==================================================
+   TÜM İŞLER
+================================================== */
+
 let tumIslerVerisi = [];
+
 async function tumSorunlariGetir() {
 
     const liste =
@@ -2404,9 +2409,12 @@ async function tumSorunlariGetir() {
 
         return;
     }
-        tumIslerVerisi = data;
+
+    tumIslerVerisi = data;
+
     tumIsleriGoster();
-    
+
+}
 
     /* ==============================================
        DURUM SIRALAMASI
