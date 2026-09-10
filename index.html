@@ -1444,11 +1444,14 @@ async function sorunDetayAc(sorunId) {
 
     liste.innerHTML = "Arıza detayları yükleniyor...";
 
+
+    // 1. Arıza bilgilerini getir
     const { data, error } = await supabaseClient
         .from("sorunlar")
         .select("*")
         .eq("id", sorunId)
         .single();
+
 
     if (error) {
 
@@ -1460,6 +1463,95 @@ async function sorunDetayAc(sorunId) {
         return;
     }
 
+
+    // 2. İşlem geçmişini getir
+    const { data: gecmis, error: gecmisHatasi } =
+        await supabaseClient
+            .from("islem_gecmisi")
+            .select(`
+                *,
+                profiles (
+                    ad_soyad
+                )
+            `)
+            .eq("sorun_id", sorunId)
+            .order("created_at", { ascending: false });
+
+
+    if (gecmisHatasi) {
+
+        console.error("İşlem geçmişi alınamadı:", gecmisHatasi);
+
+    }
+
+
+    // 3. İşlem geçmişi HTML'i
+    let gecmisHTML = "";
+
+
+    if (gecmis && gecmis.length > 0) {
+
+        gecmisHTML = gecmis.map(kayit => {
+
+            const yapan =
+                kayit.profiles?.ad_soyad || "Bilinmeyen Kullanıcı";
+
+
+            return `
+
+                <div class="card"
+                     style="
+                        margin-top:10px;
+                        padding:12px;
+                        border-left:4px solid #007bff;
+                     ">
+
+                    <p>
+                        <b>Tarih:</b>
+                        ${new Date(kayit.created_at)
+                            .toLocaleString("tr-TR")}
+                    </p>
+
+                    <p>
+                        <b>Yapan:</b>
+                        ${yapan}
+                    </p>
+
+                    <p>
+                        <b>Durum:</b>
+                        ${kayit.eski_durum || "-"}
+                        →
+                        ${kayit.yeni_durum || "-"}
+                    </p>
+
+                    <p>
+                        <b>Yapılan İşlem:</b>
+                        ${kayit.yapilan_islem || "-"}
+                    </p>
+
+                    <p>
+                        <b>Kullanılan Parça:</b>
+                        ${kayit.kullanilan_parca || "-"}
+                    </p>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+    } else {
+
+        gecmisHTML = `
+            <p>
+                Henüz işlem geçmişi bulunmuyor.
+            </p>
+        `;
+
+    }
+
+
+    // 4. Ekranı oluştur
     liste.innerHTML = `
 
         <div class="card">
@@ -1498,30 +1590,35 @@ async function sorunDetayAc(sorunId) {
 
             <p>
                 <b>Bildirim Tarihi:</b>
-                ${new Date(data.created_at).toLocaleString("tr-TR")}
+                ${new Date(data.created_at)
+                    .toLocaleString("tr-TR")}
             </p>
 
-            
-<hr>
 
-<h3>Yapılan İşlem</h3>
-
-<textarea
-    id="yapilanIslem"
-    class="form-control"
-    placeholder="Yapılan işlemi açıklayınız..."
->${data.yapilan_islem || ""}</textarea>
-
-<h3>Kullanılan Parça</h3>
-
-<textarea
-    id="kullanilanParca"
-    class="form-control"
-    placeholder="Kullanılan parçaları yazınız..."
->${data.kullanilan_parca || ""}</textarea>
+            <hr>
 
 
-<hr>
+            <h3>Yapılan İşlem</h3>
+
+            <textarea
+                id="yapilanIslem"
+                class="form-control"
+                placeholder="Yapılan işlemi açıklayınız..."
+            >${data.yapilan_islem || ""}</textarea>
+
+
+            <h3>Kullanılan Parça</h3>
+
+            <textarea
+                id="kullanilanParca"
+                class="form-control"
+                placeholder="Kullanılan parçaları yazınız..."
+            >${data.kullanilan_parca || ""}</textarea>
+
+
+            <hr>
+
+
             <h3>Durumu Değiştir</h3>
 
             <select
@@ -1556,6 +1653,7 @@ async function sorunDetayAc(sorunId) {
 
             </select>
 
+
             <button
                 class="save-button"
                 style="margin-top:15px;"
@@ -1566,8 +1664,17 @@ async function sorunDetayAc(sorunId) {
 
         </div>
 
+
+        <div class="card" style="margin-top:20px;">
+
+            <h2>📋 İşlem Geçmişi</h2>
+
+            ${gecmisHTML}
+
+        </div>
+
     `;
-    
+
 }
 async function durumGuncelle(sorunId) {
     console.log("durumGuncelle CALISTI", sorunId);
