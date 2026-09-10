@@ -1468,12 +1468,7 @@ async function sorunDetayAc(sorunId) {
     const { data: gecmis, error: gecmisHatasi } =
         await supabaseClient
             .from("islem_gecmisi")
-            .select(`
-                *,
-                profiles (
-                    ad_soyad
-                )
-            `)
+            .select("*")
             .eq("sorun_id", sorunId)
             .order("created_at", { ascending: false });
 
