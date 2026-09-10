@@ -1472,6 +1472,8 @@ async function sorunDetayAc(sorunId) {
             .select("*")
             .eq("sorun_id", sorunId)
             .order("created_at", { ascending: false });
+    console.log("GEÇMİŞ VERİSİ:", gecmis);
+console.log("GEÇMİŞ HATASI:", gecmisHatasi);
 
 
     if (gecmisHatasi) {
